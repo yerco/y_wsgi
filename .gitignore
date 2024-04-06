@@ -2,3 +2,4 @@
 .idea
 venv
 y_wsgi.iml
+**/__pycache__/

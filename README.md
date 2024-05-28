@@ -1,4 +1,5 @@
 # Y-WSGI
+A Femto framework for learning purposes
 
 ## Tools of the trade
 - Python 3.11.8

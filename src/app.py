@@ -16,13 +16,23 @@ def application(environ: Dict[str, Any], start_response: StartResponseType) -> I
     print('request method: ', request.method)
     print('request.path', request.path)
     print('request.headers', request.headers)
-    status = '200 OK'  # HTTP Status
-    headers = [('Content-type', 'text/plain')]  # HTTP Headers
+
+    # Define the status and headers explicitly
+    status: str = '200 OK'  # HTTP Status
+    headers: List[Tuple[str, str]] = [('Content-type', 'text/plain')]  # HTTP Headers
+
     # byte strings for the response body to handle any kind of content (images, videos, or binary data)
     response = Response(status=status, headers=headers, body=[b'Hello', b' ', b'YWSGI', b' ', b'World'])
-    status = response.status
-    headers = response.headers
-    start_response(status, headers)
+
+    response_status: str = response.status
+    response_headers: List[Tuple[str, str]] = response.headers
+
+    # Ensure that the response status and headers are correctly typed
+    assert isinstance(response_status, str), f"Expected str, got {type(response_status).__name__}"
+    assert isinstance(response_headers, list) and all(isinstance(header, tuple) for header in response_headers), \
+        "Headers should be a list of tuples"
+
+    start_response(response_status, response_headers)
 
     # An iterable yielding byte strings
     return response

@@ -1,8 +1,17 @@
+from typing import Callable, Dict, Any, List, Tuple, Iterable
+
 from src.request import Request
 from src.response import Response
 
+"""
+A string (str) for the status.
+A list of tuples (List[Tuple[str, str]]) for the response headers.
+An optional third argument of any type (Any) for exception information.
+"""
+StartResponseType = Callable[[str, List[Tuple[str, str]], Any], None]
 
-def application(environ, start_response):
+
+def application(environ: Dict[str, Any], start_response: StartResponseType) -> Iterable[bytes]:
     request = Request(environ)
     print('request method: ', request.method)
     print('request.path', request.path)

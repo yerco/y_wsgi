@@ -99,7 +99,7 @@ class Request:
     def get_query_params(self) -> Dict[str, list[str]]:
         return parse_qs(self.query_string)
 
-    def get_json(self) -> Optional[Union[Dict[str, Any, list]]]:
+    def get_json(self) -> Optional[Union[Dict[str, Any], list]]:
         import json
         if 'application/json' in self.headers.get('Content-Type', ''):
             return json.loads(self.body)

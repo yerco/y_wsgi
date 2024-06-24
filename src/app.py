@@ -1,4 +1,4 @@
-from typing import Callable, Dict, Any, List, Tuple, Iterable, Type
+from typing import Callable, Dict, Any, List, Tuple, Iterable, Type, Union
 
 from src.request import Request
 from src.response import Response
@@ -12,14 +12,16 @@ An optional third argument of any type (Any) for exception information.
 """
 StartResponseType = Callable[[str, List[Tuple[str, str]], Any], None]
 
+HandlerType = Union[Type[View], Callable[[Request], Response]]
+
 
 class App:
     def __init__(self):
         self.router = Router()
 
     # decorator
-    def route(self, path: str) -> Callable[[Type[View]], Type[View]]:
-        def wrapper(handler: Type[View]) -> Type[View]:
+    def route(self, path: str) -> Callable[[HandlerType], HandlerType]:
+        def wrapper(handler: HandlerType) -> HandlerType:
             self.router.add_route(path, handler)
             return handler
         return wrapper
@@ -30,10 +32,13 @@ class App:
         # print('request.path', request.path)
         # print('request.headers', request.headers)
 
-        handler_cls = self.router.match(request.path)
-        if handler_cls:
-            handler = handler_cls()
-            response = handler(request)
+        handler = self.router.match(request.path)
+        if handler:
+            if isinstance(handler, type) and issubclass(handler, View):
+                handler_instance = handler()
+                response = handler_instance(request)
+            else:
+                response = handler(request)
         else:
             response = Response(status='404 Not Found', headers=[('Content-type', 'text/plain')], body=[b'Not Found'])
 

@@ -1,8 +1,9 @@
-from typing import Callable, Dict, Any, List, Tuple, Iterable
+from typing import Callable, Dict, Any, List, Tuple, Iterable, Type
 
 from src.request import Request
 from src.response import Response
 from src.router import Router
+from src.view import View
 
 """
 A string (str) for the status.
@@ -16,8 +17,9 @@ class App:
     def __init__(self):
         self.router = Router()
 
-    def route(self, path: str) -> Callable[[Callable[[Request], Response]], Callable[[Request], Response]]:
-        def wrapper(handler: Callable[[Request], Response]) -> Callable[[Request], Response]:
+    # decorator
+    def route(self, path: str) -> Callable[[Type[View]], Type[View]]:
+        def wrapper(handler: Type[View]) -> Type[View]:
             self.router.add_route(path, handler)
             return handler
         return wrapper
@@ -28,8 +30,9 @@ class App:
         # print('request.path', request.path)
         # print('request.headers', request.headers)
 
-        handler = self.router.match(request.path)
-        if handler:
+        handler_cls = self.router.match(request.path)
+        if handler_cls:
+            handler = handler_cls()
             response = handler(request)
         else:
             response = Response(status='404 Not Found', headers=[('Content-type', 'text/plain')], body=[b'Not Found'])

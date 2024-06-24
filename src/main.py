@@ -4,17 +4,14 @@ from typing import List, Tuple
 from src.app import App
 from src.response import Response
 from src.request import Request
+from src.handlers import HelloWorldHandler
 
 app = App()
 
 
 @app.route('/')
-def hello_world_handler(request: Request) -> Response:
-    # Define the status and headers explicitly
-    status: str = '200 OK'  # HTTP Status
-    headers: List[Tuple[str, str]] = [('Content-type', 'text/plain')]  # HTTP Headers
-    # byte strings for the response body to handle any kind of content (images, videos, or binary data)
-    return Response(status=status, headers=headers, body=[b'Hello', b' ', b'YWSGI', b' ', b'World'])
+class HelloWorld(HelloWorldHandler):
+    pass
 
 
 @app.route('/json')

@@ -1,11 +1,10 @@
-from typing import Callable
+from typing import Type
 
-from src.request import Request
-from src.response import Response
+from src.view import View
 
 
 class Route:
-    def __init__(self, path: str, handler: Callable[[Request], Response]) -> None:
+    def __init__(self, path: str, handler: Type[View]) -> None:
         self.path = path
         self.handler = handler
 

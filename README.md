@@ -13,7 +13,7 @@ $ pip install -r requirements.txt
 2. Run the server
 2.1 Using gunicorn
 ```bash
-$ gunicorn wsgi:application [--reload]
+$ gunicorn wsgi:application [--reload] [--access-logfile -]
 ```
 2.2 Using uWSGI
 ```bash

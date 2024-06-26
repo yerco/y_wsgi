@@ -1,4 +1,4 @@
-from typing import List, Optional, Type, Union, Callable
+from typing import List, Optional, Type, Union, Callable, Tuple, Dict, Any
 
 from src.request import Request
 from src.response import Response
@@ -15,8 +15,9 @@ class Router:
     def add_route(self, path: str, handler: HandlerType) -> None:
         self.routes.append(Route(path, handler))
 
-    def match(self, path: str) -> Optional[HandlerType]:
+    def match(self, path: str) -> Optional[Tuple[Callable, Dict[str, Any]]]:
         for route in self.routes:
-            if route.match(path):
-                return route.handler
+            match = route.match(path)
+            if match:
+                return match
         return None

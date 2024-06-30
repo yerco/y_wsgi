@@ -14,7 +14,7 @@ An optional third argument of any type (Any) for exception information.
 """
 StartResponseType = Callable[[str, List[Tuple[str, str]], Any], None]
 
-HandlerType = Union[Type[View], Callable[[Request], Response]]
+HandlerType = Union[Type[View], Callable[[Request, Dict[str, Any]], Response]]
 
 
 class App:
@@ -67,14 +67,21 @@ class App:
             if isinstance(handler, type) and issubclass(handler, View):
                 handler_instance = handler()
                 response = handler_instance(request, **params)
-            else:
+            elif callable(handler):
                 response = handler(request, **params)
+            else:
+                response = Response(status='500 Internal Server Error', headers=[('Content-type', 'text/plain')],
+                                    body=[b'Internal Server Error'])
         else:
             response = Response(status='404 Not Found', headers=[('Content-type', 'text/plain')], body=[b'Not Found'])
 
+        # Ensure response is always a Response object
+        if not isinstance(response, Response):
+            response = Response(status='500 Internal Server Error', headers=[('Content-type', 'text/plain')],
+                                body=[b'Internal Server Error'])
+
         # Apply after_request hooks and middleware
         response = self._apply_after_request_middlewares_and_hooks(request, response)
-
         # Apply teardown_request hooks
         self._apply_teardown_request_hooks(request)
 

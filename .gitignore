@@ -3,3 +3,4 @@
 venv
 y_wsgi.iml
 **/__pycache__/
+qodana.yaml

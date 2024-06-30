@@ -15,9 +15,9 @@ class Router:
     def add_route(self, path: str, handler: HandlerType) -> None:
         self.routes.append(Route(path, handler))
 
-    def match(self, path: str) -> Optional[Tuple[Callable, Dict[str, Any]]]:
+    def match(self, path: str) -> Tuple[Optional[Callable], Dict[str, str]]:
         for route in self.routes:
             match = route.match(path)
             if match:
                 return match
-        return None
+        return None, {}

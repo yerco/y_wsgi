@@ -14,4 +14,4 @@ class Middleware:
 
     def after_request(self, request: Request, response: Response) -> Response:
         """Process the response after the view has been called."""
-        pass
+        return response

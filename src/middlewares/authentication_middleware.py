@@ -7,7 +7,7 @@ from src.response import Response
 
 
 class AuthenticationMiddleware(Middleware):
-    public_routes: List[str] = ["/", "/greet/[^/]+", "/json", "/login", "/about"]
+    public_routes: List[str] = ["/", "/greet", "/greet/[^/]+", "/json", "/login", "/about"]
 
     def before_request(self, request: Request) -> Optional[Response]:
         for public_route in self.public_routes:

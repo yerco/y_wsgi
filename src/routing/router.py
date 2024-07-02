@@ -1,9 +1,9 @@
-from typing import List, Optional, Type, Union, Callable, Tuple, Dict, Any
+from typing import List, Optional, Type, Union, Callable, Tuple, Dict
 
-from src.request import Request
-from src.response import Response
-from src.lazy_route import LazyRoute
-from src.view import View
+from src.core.request import Request
+from src.core.response import Response
+from src.routing.lazy_route import LazyRoute
+from src.core.view import View
 
 HandlerType = Union[Type[View], Callable[[Request], Response]]
 

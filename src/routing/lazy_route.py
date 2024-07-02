@@ -1,9 +1,9 @@
 import re
 from typing import Type, Union, Callable, Optional, Tuple, Dict, Any
 
-from src.request import Request
-from src.response import Response
-from src.view import View
+from src.core.request import Request
+from src.core.response import Response
+from src.core.view import View
 
 HandlerType = Union[Type[View], Callable[[Request, Dict[str, Any]], Response]]
 

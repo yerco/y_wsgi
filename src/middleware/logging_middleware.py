@@ -1,6 +1,6 @@
-from src.middleware import Middleware
-from src.request import Request
-from src.response import Response
+from src.middleware.middleware import Middleware
+from src.core.request import Request
+from src.core.response import Response
 from typing import Optional
 
 

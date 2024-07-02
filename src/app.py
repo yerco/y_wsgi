@@ -1,11 +1,11 @@
 from typing import Callable, Dict, Any, List, Tuple, Iterable, Type, Union, Optional
 
-from src.hooks import Hooks
-from src.middleware import Middleware
-from src.request import Request
-from src.response import Response
-from src.router import Router
-from src.view import View
+from src.hooks.hooks import Hooks
+from src.middleware.middleware import Middleware
+from src.core.request import Request
+from src.core.response import Response
+from src.routing.router import Router
+from src.core.view import View
 
 """
 A string (str) for the status.

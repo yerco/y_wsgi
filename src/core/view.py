@@ -1,6 +1,6 @@
 from typing import Callable, Dict, Any
-from src.request import Request
-from src.response import Response
+from src.core.request import Request
+from src.core.response import Response
 
 # Define a type alias for the method signatures
 HandlerFunction = Callable[[Request, Dict[str, Any]], Response]

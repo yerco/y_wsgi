@@ -1,8 +1,8 @@
 from typing import List, Tuple, Dict, Any
 
-from src.view import View
-from src.request import Request
-from src.response import Response
+from src.core.view import View
+from src.core.request import Request
+from src.core.response import Response
 
 
 class HelloWorldHandler(View):

@@ -1,3 +1,4 @@
 gunicorn==21.2.0
 packaging==24.0
 uWSGI==2.0.24
+pytest==8.2.2

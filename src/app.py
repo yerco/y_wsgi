@@ -90,8 +90,14 @@ class App:
         return self._start_response(response, start_response)
 
     def _apply_before_request_middlewares_and_hooks(self, request: Request) -> Optional[Response]:
+        if self.hooks.first_request:
+            for hook in self.hooks.before_first_request_hooks:
+                hook()
+            self.hooks.first_request = False  # Ensure it only runs once
+
         for hook in self.hooks.before_request_hooks:
             hook()
+
         for middleware in self.middlewares:
             response = middleware.before_request(request)
             if response:

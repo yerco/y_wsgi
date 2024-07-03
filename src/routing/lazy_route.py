@@ -5,7 +5,7 @@ from src.core.request import Request
 from src.core.response import Response
 from src.core.view import View
 
-HandlerType = Union[Type[View], Callable[[Request, Dict[str, Any]], Response]]
+HandlerType = Union[Type[View], Callable[..., Response]]
 
 
 class LazyRoute:

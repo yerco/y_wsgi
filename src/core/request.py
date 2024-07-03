@@ -23,7 +23,7 @@ class Request:
         headers = {}
         for key, value in self.environ.items():
             if key.startswith('HTTP_'):
-                headers[key[5:].replace('_', '-')] = value
+                headers[key[5:].replace('_', '-').lower()] = value
             elif key in ('CONTENT_TYPE', 'CONTENT_LENGTH'):
                 # First letter of each work capitalized, e.g. 'content-type' becomes 'Content-Type'.
                 headers[key.replace('_', '-').title()] = value

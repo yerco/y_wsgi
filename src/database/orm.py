@@ -2,12 +2,7 @@ from typing import Any, Dict, List, Type, TypeVar, Optional
 
 from src.database.orm_interface import ORMInterface
 from src.database.models import Model
-
-
-# Simple in-memory storage/database
-database: Dict[str, List[Model]] = {
-    'users': []
-}
+from src.database.database import database
 
 T = TypeVar('T', bound=Model)
 
@@ -54,3 +49,7 @@ class ORM(ORMInterface):
             if instance.id == id:
                 return instance
         return None
+
+    def wipe_database(self) -> None:
+        for key in database:
+            database[key] = []

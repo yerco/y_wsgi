@@ -12,12 +12,12 @@ class Router:
     def __init__(self):
         self.routes: List[LazyRoute] = []
 
-    def add_route(self, path: str, handler: HandlerType) -> None:
-        self.routes.append(LazyRoute(path, handler_factory=lambda: handler))
+    def add_route(self, path: str, handler: HandlerType, methods: List[str]) -> None:
+        self.routes.append(LazyRoute(path, handler_factory=lambda: handler, methods=methods))
 
-    def match(self, path: str) -> Tuple[Optional[HandlerType], Dict[str, str]]:
+    def match(self, path: str, method: str) -> Tuple[Optional[HandlerType], Dict[str, str]]:
         for route in self.routes:
-            match = route.match(path)
+            match = route.match(path, method)
             if match:
                 print(f"Route matched: {route.path}")
                 return match

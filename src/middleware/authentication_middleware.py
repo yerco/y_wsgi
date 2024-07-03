@@ -7,11 +7,13 @@ from src.core.response import Response
 
 
 class AuthenticationMiddleware(Middleware):
-    public_routes: List[str] = ["/", "/greet", "/greet/[^/]+", "/json", "/login", "/about"]
+    public_routes: List[str] = ["/", "/greet", "/greet/[^/]+", "/json", "/login", "/about", "/users", "/create_user",
+                                r"/user/\d+", "/filter_users/[^/]+"]
 
     def before_request(self, request: Request) -> Optional[Response]:
         for public_route in self.public_routes:
             if re.fullmatch(public_route, request.path):
+                print(f"Path {request.path} matches public route {public_route}")
                 return None  # Skip authentication for public routes
 
         token = request.headers.get("X-API-Token")

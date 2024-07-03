@@ -24,9 +24,9 @@ class App:
         self.hooks = Hooks()
 
     # decorator
-    def route(self, path: str) -> Callable[[HandlerType], HandlerType]:
+    def route(self, path: str, methods: List[str] = None) -> Callable[[HandlerType], HandlerType]:
         def wrapper(handler: HandlerType) -> HandlerType:
-            self.router.add_route(path, handler)
+            self.router.add_route(path, handler, methods)
             return handler
         return wrapper
 
@@ -62,7 +62,7 @@ class App:
         if response:
             return self._start_response(response, start_response)
 
-        handler, params = self.router.match(request.path)
+        handler, params = self.router.match(request.path, request.method)
         print(f"Matched handler: {handler}, Params: {params}")
 
         if handler:

@@ -1,11 +1,11 @@
-from src.database.models import User
+from src.tests.model_for_testing import ModelForTesting
 
 
 class UserFactory:
     @staticmethod
-    def create_user(username: str, password: str) -> User:
+    def create_user(username: str, password: str) -> ModelForTesting:
         # Add complex logic here if needed
-        return User(username=username, password=password)
+        return ModelForTesting(username=username, password=password)
 
 
 # Usage

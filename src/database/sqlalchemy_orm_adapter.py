@@ -1,15 +1,20 @@
 from typing import Any, List, Optional, Type, TypeVar
 from sqlalchemy.orm import Session
+from sqlalchemy.sql import ColumnElement
+
 from src.database.orm_interface import ORMInterface
-from src.database.config import SessionLocal, Base
+from src.database.config import Database
 
 
-T = TypeVar('T', bound=Base)
+T = TypeVar('T', bound=Database.Base)
 
 
 class SQLAlchemyORMAdapter(ORMInterface):
-    def __init__(self):
-        self.db: Session = SessionLocal()
+    def __init__(self, db: Database):
+        self.db: Session = db.SessionLocal()
+
+    def register(self, model_class: Type[T]) -> None:
+        model_class.__table__.create(self.db.bind, checkfirst=True)
 
     def create(self, model_class: Type[T], **kwargs: Any) -> T:
         instance = model_class(**kwargs)
@@ -24,7 +29,8 @@ class SQLAlchemyORMAdapter(ORMInterface):
     def filter(self, model_class: Type[T], **kwargs: Any) -> List[T]:
         query = self.db.query(model_class)
         for k, v in kwargs.items():
-            query = query.filter(getattr(model_class, k) == v)
+            column_attr: ColumnElement = getattr(model_class, k)
+            query = query.filter(column_attr == v)
         return query.all()
 
     def get_by_id(self, model_class: Type[T], id: int) -> Optional[T]:

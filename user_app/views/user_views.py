@@ -4,7 +4,8 @@ from typing import List, Tuple
 from src.core.request import Request
 from src.core.response import Response
 from src.database.orm_interface import ORMInterface
-from src.database.models import User
+
+from user_app.models.models import User
 
 
 def register_routes(app, orm: ORMInterface):

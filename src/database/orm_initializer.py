@@ -1,21 +1,22 @@
-from typing import Union
+from typing import Type, List
+
+from src.database.models import Model
 from src.database.orm_interface import ORMInterface
-from src.database.models import User
 from src.database.orm import ORM as MinimalORM
+from src.database.sqlalchemy_orm_adapter import SQLAlchemyORMAdapter
+from src.database.minimal_orm_adapter import MinimalORMAdapter
+from src.database.config import Database
 
 
-try:
-    from src.database.sqlalchemy_orm_adapter import SQLAlchemyORMAdapter
-    USE_SQLALCHEMY = True
-except ImportError:
-    from src.database.minimal_orm_adapter import MinimalORMAdapter
-    USE_SQLALCHEMY = False
-
-
-def initialize_orm() -> ORMInterface:
-    if USE_SQLALCHEMY:
-        return SQLAlchemyORMAdapter()
+def initialize_orm(models: List[Type[Model]], database_url: str = None) -> ORMInterface:
+    if database_url:
+        db = Database(database_url)
+        orm = SQLAlchemyORMAdapter(db)
     else:
         minimal_orm = MinimalORM()
-        minimal_orm.register(User)
-        return MinimalORMAdapter(minimal_orm)
+        orm = MinimalORMAdapter(minimal_orm)
+
+    for model in models:
+        orm.register(model)
+
+    return orm

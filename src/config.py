@@ -6,8 +6,7 @@ class Config:
     DEBUG = os.getenv("DEBUG", "False") == "True"
     SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key")
 
-    # Database configuration
-    DATABASE_URI = os.getenv("DATABASE_URI", "sqlite:///./test.db")
+    # Framework-specific configuration
 
 
 config = Config()

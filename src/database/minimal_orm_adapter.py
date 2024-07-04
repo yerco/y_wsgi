@@ -1,12 +1,15 @@
 from typing import Any, List, Optional, Type
 from src.database.orm_interface import ORMInterface
-from src.database.orm import ORM
 from src.database.models import Model
+from src.database.orm import ORM, T
 
 
 class MinimalORMAdapter(ORMInterface):
     def __init__(self, orm: ORM):
         self.orm = orm
+
+    def register(self, model_class: Type[T]) -> None:
+        self.orm.register(model_class)
 
     def create(self, model_class: Type[Model], **kwargs: Any) -> Any:
         return self.orm.create(model_class, **kwargs)

@@ -1,9 +1,9 @@
 import pytest
 from src.app import App
-from tests.test_client import FrameworkTestClient
+from src.tests.test_client import FrameworkTestClient
 from src.core.request import Request
 from src.core.response import Response
-from src.middleware.logging_middleware import LoggingMiddleware
+from user_app.middleware.logging_middleware import LoggingMiddleware
 from src.core.view import View
 from typing import Dict, Any
 

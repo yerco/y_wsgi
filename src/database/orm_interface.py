@@ -15,3 +15,6 @@ class ORMInterface:
 
     def get_by_id(self, model_class: T, id: int) -> Optional[T]:
         raise NotImplementedError
+
+    def register(self, model_class: T) -> None:
+        raise NotImplementedError

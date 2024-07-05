@@ -12,6 +12,6 @@ class Middleware:
         """
         pass
 
-    def after_request(self, request: Request, response: Response) -> Response:
+    def after_request(self, request: Request, response: Response) -> Optional[Response]:
         """Process the response after the view has been called."""
         return response

@@ -12,6 +12,10 @@ class Router:
     def __init__(self):
         self.routes: List[LazyRoute] = []
 
+    def add_routes(self, routes: List[Tuple[str, HandlerType, List[str]]]) -> None:
+        for path, handler, methods in routes:
+            self.add_route(path, handler, methods)
+
     def add_route(self, path: str, handler: HandlerType, methods: List[str]) -> None:
         self.routes.append(LazyRoute(path, handler_factory=lambda: handler, methods=methods))
 

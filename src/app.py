@@ -30,7 +30,7 @@ class App:
             return handler
         return wrapper
 
-    def use_middleware(self, middleware_cls: Callable) -> None:
+    def use_middleware(self, middleware_cls: Callable[[], Middleware]) -> None:
         self.middlewares.append(middleware_cls())
 
     def before_request(self, hook: Callable) -> None:

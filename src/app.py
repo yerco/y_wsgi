@@ -63,7 +63,7 @@ class App:
             return self._start_response(response, start_response)
 
         handler, params = self.router.match(request.path, request.method)
-        print(f"Matched handler: {handler}, Params: {params}")
+        # print(f"Matched handler: {handler}, Params: {params}")
 
         if handler:
             if isinstance(handler, type) and issubclass(handler, View):

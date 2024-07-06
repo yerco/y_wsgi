@@ -14,6 +14,12 @@ class Response:
             return f'{status} {self._status_message(status)}'
         return status
 
+    def __call__(self, environ, start_response):
+        # Start the WSGI response
+        start_response(self._status, self.headers)
+        # Return the body as an iterable
+        return self
+
     @staticmethod
     def _status_message(status_code: int) -> str:
         # A simple mapping of status codes to messages

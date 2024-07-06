@@ -16,12 +16,12 @@ class LazyRoute:
         self._handler_factory = handler_factory
         self.methods = methods if methods else ['GET']
         self.regex = re.compile(self._convert_path_to_regex(path))
-        print(f"Converted path '{self.path}' to regex '{self.regex.pattern}'")  # Debugging output
+        # print(f"Converted path '{self.path}' to regex '{self.regex.pattern}'")  # Debugging output
 
     @property
     def handler(self) -> HandlerType:
         if self._handler is None:
-            print(f"Instantiating handler for path: {self.path}")
+            # print(f"Instantiating handler for path: {self.path}")
             self._handler = self._handler_factory()
         return self._handler
 
@@ -35,7 +35,7 @@ class LazyRoute:
 
     @staticmethod
     def _convert_path_to_regex(path: str) -> str:
-        print(f"Original path: {path}")  # Debugging output
+        # print(f"Original path: {path}")  # Debugging output
 
         # Patterns to replace
         patterns = {
@@ -48,9 +48,9 @@ class LazyRoute:
         for pattern, replacement in patterns.items():
             new_path = re.sub(pattern, replacement, path)
             if new_path != path:
-                print(f"Converted regex path: {new_path}")  # Debugging output
+                # print(f"Converted regex path: {new_path}")  # Debugging output
                 return f'^{new_path}$'
 
         # If no patterns matched, return the original path wrapped in regex start and end anchors
-        print(f"No patterns matched. Converted regex path: {path}")  # Debugging output
+        # print(f"No patterns matched. Converted regex path: {path}")  # Debugging output
         return f'^{path}$'

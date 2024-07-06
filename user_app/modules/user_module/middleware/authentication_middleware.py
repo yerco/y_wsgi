@@ -11,6 +11,7 @@ class AuthenticationMiddleware(Middleware):
                                 r"/user/\d+", "/filter_users/[^/]+"]
 
     def before_request(self, request: Request) -> Optional[Response]:
+        print(f"Processing request: {request.path}")
         for public_route in self.public_routes:
             if re.fullmatch(public_route, request.path):
                 print(f"Path {request.path} matches public route {public_route}")

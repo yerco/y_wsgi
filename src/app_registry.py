@@ -1,7 +1,7 @@
 from typing import Dict
 
 from src.app import App
-from src.module import Module
+from src.core.module import Module
 
 
 class AppRegistry:

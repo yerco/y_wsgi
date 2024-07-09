@@ -1,5 +1,4 @@
-from typing import List, Callable, Type
-from inspect import signature
+from typing import List, Callable, Type, Any
 
 from src.app import App
 from src.database.orm_interface import ORMInterface
@@ -14,8 +13,8 @@ class Module:
         self.middlewares: List[Middleware] = []
         self.hooks = Hooks()
 
-    def use_middleware(self, middleware_cls: Type[Middleware]) -> None:
-        middleware_instance = middleware_cls()
+    def use_middleware(self, middleware_cls: Type[Middleware], *args: Any, **kwargs: Any) -> None:
+        middleware_instance = middleware_cls(*args, **kwargs)
         self.middlewares.append(middleware_instance)
         self.app.use_middleware(lambda: middleware_instance)
 

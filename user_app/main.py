@@ -1,9 +1,10 @@
 from src.app_registry import AppRegistry
 from user_app.modules.user_module.repositories.repository import UserRepository
 from src.database.orm_initializer import initialize_orm
+from src.middleware.authentication_middleware import AuthenticationMiddleware
 
 from user_app.modules.user_module.middleware.logging_middleware import LoggingMiddleware
-from user_app.modules.user_module.middleware.authentication_middleware import AuthenticationMiddleware
+# from user_app.modules.user_module.middleware.authentication_middleware import AuthenticationMiddleware
 from user_app.modules.user_module.hooks import some_hooks
 from user_app.modules.user_module.views import hello_views, user_views
 from user_app.modules.user_module.models.models import User
@@ -21,9 +22,11 @@ orm = initialize_orm([User])
 # Create user module
 user_mod = app_registry.create_module('user_module', app)
 
+public_routes = ["/", "/greet", "/greet/[^/]+", "/json", "/about", "/users", "/create_user",
+                 r"/user/\d+", "/filter_users/[^/]+"]
 # Register user module middlewares
 # user_mod.use_middleware(LoggingMiddleware)
-user_mod.use_middleware(AuthenticationMiddleware)
+user_mod.use_middleware(AuthenticationMiddleware, public_routes=public_routes)
 
 # # Register user module hooks
 # user_mod.before_request(some_hooks.before_request_hook)

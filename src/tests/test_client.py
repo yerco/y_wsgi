@@ -27,8 +27,9 @@ class FrameworkTestClient:
             for header, value in headers.items():
                 environ[f'HTTP_{header.upper().replace("-", "_")}'] = value
 
-        response_body = self.app(environ, self._start_response)
-        response = Response(status='200 OK', headers=self.response_headers, body=response_body)
+        response_iterable = self.app(environ, self._start_response)
+        response_body = b''.join(response_iterable)
+        response = Response(status=self.response_status, headers=self.response_headers, body=response_body)
         return response
 
     def _start_response(self, status: str, headers: list, exc_info: Optional[Any] = None) -> None:

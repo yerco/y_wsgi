@@ -23,11 +23,11 @@ class AuthenticationMiddleware(Middleware):
                 print(f"Framework's Middleware: Path {request.path} matches public route {public_route}")
                 return None  # Skip authentication for public routes
 
-        if request.path == "/login":
-            return Response(status="401 Unauthorized", body=[b"Unauthorized"])  # Block access to "/login"
+        # if request.path not in self.public_routes:
+        #     return Response(status="401 Unauthorized", body=[b"Unauthorized"])  # Block access
 
-        username = request.headers.get("X-Username")
-        password = request.headers.get("X-Password")
+        username = request.headers.get("x-username")
+        password = request.headers.get("x-password")
 
         if isinstance(self.auth_context.state, LockedState):
             return self.auth_context.handle_request(request)
@@ -45,6 +45,7 @@ class AuthenticationMiddleware(Middleware):
                 self.auth_context.change_state(UnauthenticatedState())
         else:
             self.auth_context.change_state(UnauthenticatedState())
+            return self.auth_context.handle_request(request)
 
     def after_request(self, request: Request, response: Response) -> Response:
         self.auth_context.change_state(UnauthenticatedState())

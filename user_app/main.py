@@ -8,7 +8,7 @@ from user_app.modules.user_module.middleware.logging_middleware import LoggingMi
 from user_app.modules.user_module.hooks import some_hooks
 from user_app.modules.user_module.views import hello_views, user_views
 from user_app.modules.user_module.models.models import User
-
+from user_app.config import config
 
 # Create an instance of AppRegistry
 app_registry = AppRegistry()
@@ -22,11 +22,9 @@ orm = initialize_orm([User])
 # Create user module
 user_mod = app_registry.create_module('user_module', app)
 
-public_routes = ["/", "/greet", "/greet/[^/]+", "/json", "/about", "/users", "/create_user",
-                 r"/user/\d+", "/filter_users/[^/]+"]
 # Register user module middlewares
 # user_mod.use_middleware(LoggingMiddleware)
-user_mod.use_middleware(AuthenticationMiddleware, public_routes=public_routes)
+user_mod.use_middleware(AuthenticationMiddleware, public_routes=config.PUBLIC_ROUTES)
 
 # # Register user module hooks
 # user_mod.before_request(some_hooks.before_request_hook)

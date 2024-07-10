@@ -9,5 +9,8 @@ class UserAppConfig:
     # Database configuration
     DATABASE_URL = os.getenv("USER_APP_DATABASE_URL", "sqlite:///./user_app.db")
 
+    PUBLIC_ROUTES = ["/", "/greet", "/greet/[^/]+", "/about", "/users", "/create_user",
+                     r"/user/\d+", "/filter_users/[^/]+"]  # "/json" removed
+
 
 config = UserAppConfig()

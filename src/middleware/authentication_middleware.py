@@ -16,15 +16,13 @@ class AuthenticationMiddleware(Middleware):
         self.auth_context = AuthContext()
         self.public_routes = public_routes
         self.MAX_FAILED_ATTEMPTS = config.MAX_FAILED_ATTEMPTS
+        self.default_users = {user["username"]: user for user in config.DEFAULT_USERS}
 
     def before_request(self, request: Request):
         for public_route in self.public_routes:
             if re.fullmatch(public_route, request.path):
                 print(f"Framework's Middleware: Path {request.path} matches public route {public_route}")
                 return None  # Skip authentication for public routes
-
-        # if request.path not in self.public_routes:
-        #     return Response(status="401 Unauthorized", body=[b"Unauthorized"])  # Block access
 
         username = request.headers.get("x-username")
         password = request.headers.get("x-password")
@@ -37,12 +35,14 @@ class AuthenticationMiddleware(Middleware):
             if user:
                 self.auth_context.user = user
                 self.auth_context.change_state(AuthenticatedState())
+                if not self._authorize(user, request.path):
+                    return Response(status="403 Forbidden", body=[b"Forbidden"])
             else:
                 self.auth_context.failed_attempts += 1
                 if self.auth_context.failed_attempts >= self.MAX_FAILED_ATTEMPTS:
                     self.auth_context.lock()
                     return self.auth_context.handle_request(request)
-                self.auth_context.change_state(UnauthenticatedState())
+                return Response(status="401 Unauthorized", body=[b"Unauthorized"])
         else:
             self.auth_context.change_state(UnauthenticatedState())
             return self.auth_context.handle_request(request)
@@ -52,7 +52,19 @@ class AuthenticationMiddleware(Middleware):
         return response
 
     def _authenticate(self, username: str, password: str) -> Union[Dict, None]:
-        # This is a placeholder implementation, add other logic
-        if username == "user" and password == "password":
-            return {"username": username}
+        user = self.default_users.get(username)
+        if user and user["password"] == password:
+            return user
         return None
+
+    def _authorize(self, user: Dict, route: str) -> bool:
+        role = user.get("role")
+        # Define role-based access control logic here
+        if role == "admin":
+            return True  # admin have access to everything
+        if role == "user":
+            if route not in self.public_routes:
+                return False
+            return True
+        return False
+

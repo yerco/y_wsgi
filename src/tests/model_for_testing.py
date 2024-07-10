@@ -6,6 +6,7 @@ class ModelForTesting(Model):
     id = IntegerField('id')
     username = CharField('username')
     password = CharField('password')
+    role = CharField('role')
 
     def __repr__(self):
-        return f'<ModelForTesting {self.id} {self.username}>'
+        return f'<ModelForTesting {self.id} {self.username} {self.role}>'

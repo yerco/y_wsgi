@@ -4,7 +4,6 @@ from src.app_registry import AppRegistry
 from src.database.orm_initializer import initialize_orm
 from src.middleware.authentication_middleware import AuthenticationMiddleware
 from src.tests.test_client import FrameworkTestClient
-from src.core.response import Response
 from src.tests.model_for_testing import ModelForTesting
 from src.tests.views_for_testing import register_routes
 
@@ -42,12 +41,23 @@ def test_public_route(client):
 def test_private_route_unauthenticated(client):
     response = client.get('/private')
     assert response.status == '401 Unauthorized'
+    assert b'Unauthorized' in response.body
 
 
-def test_private_route_authenticated(client):
+def test_private_route_authenticated_user(client):
     headers = {
         'X-Username': 'user',
         'X-Password': 'password'
+    }
+    response = client.get('/private', headers=headers)
+    assert response.status == '403 Forbidden'
+    assert b'Forbidden' in response.body
+
+
+def test_private_route_authenticated_admin(client):
+    headers = {
+        'X-Username': 'admin',
+        'X-Password': 'adminpassword'
     }
     response = client.get('/private', headers=headers)
     assert response.status == '200 OK'

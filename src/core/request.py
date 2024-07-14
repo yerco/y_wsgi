@@ -112,3 +112,11 @@ class Request:
             if key not in headers and not key.startswith('wsgi.') and not key.startswith('HTTP_'):
                 headers[key.replace('_', '-').title()] = self.environ[key]
         return headers
+
+    def extract_session_id(self) -> Optional[str]:
+        cookies = self.environ.get('HTTP_COOKIE', '')
+        session_id = None
+        for cookie in cookies.split(';'):
+            if cookie.strip().startswith('session_id='):
+                session_id = cookie.split('=')[1].strip()
+        return session_id

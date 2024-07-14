@@ -15,6 +15,7 @@ class Config:
         {"username": "user", "password": "password", "role": "user"}
     ]
 
+    SESSION_EXPIRY = int(3600)
     # Framework-specific configuration
 
 

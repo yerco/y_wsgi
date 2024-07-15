@@ -24,8 +24,8 @@ def test_write_and_get_session():
     store.write(session)
 
     assert len(store) == 1
-    retrieved_session = store.get_session()
-    assert retrieved_session.id == store._sign_session_id('session1')
+    retrieved_session = store.get_session_by_id('session1')
+    assert retrieved_session.signed_id == store._sign_session_id('session1')
 
 
 def test_undo_redo_functionality():
@@ -45,12 +45,12 @@ def test_undo_redo_functionality():
     # Undo the last session
     store.undo()
     assert len(store) == 1
-    assert store.get_session().id == store._sign_session_id('session1')
+    assert store.get_session_by_id(session1.id).signed_id == store._sign_session_id('session1')
 
     # Redo the last undone session
     store.redo()
     assert len(store) == 2
-    assert store.get_session().id == store._sign_session_id('session2')
+    assert store.get_session_by_id(session2.id).signed_id == store._sign_session_id('session2')
 
     # Undo twice
     store.undo()
@@ -61,7 +61,7 @@ def test_undo_redo_functionality():
     store.redo()
     store.redo()
     assert len(store) == 2
-    assert store.get_session().id == store._sign_session_id('session2')
+    assert store.get_session_by_id(session2.id).signed_id == store._sign_session_id('session2')
 
 
 def test_session_caretaker():

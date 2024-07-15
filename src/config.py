@@ -15,7 +15,8 @@ class Config:
         {"username": "user", "password": "password", "role": "user"}
     ]
 
-    SESSION_EXPIRY = int(3600)
+    SESSION_EXPIRY = 3600  # Session expiry time in seconds (e.g., 1 hour)
+    SESSION_ID_ROTATION_INTERVAL = 1800  # Session ID rotation interval in seconds (e.g., 30 minutes)
     # Framework-specific configuration
 
 

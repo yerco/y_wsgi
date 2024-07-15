@@ -1,10 +1,13 @@
 from urllib.parse import parse_qs
 from typing import Dict, Any, Optional, Union
 
+from src.session.session import Session
+
 
 class Request:
     def __init__(self, environ: Dict[str, Any]) -> None:
         self.environ: Dict[str, Any] = environ
+        self._session: Optional[Session] = None  # Placeholder for session
 
     @property
     def method(self) -> str:
@@ -120,3 +123,11 @@ class Request:
             if cookie.strip().startswith('session_id='):
                 session_id = cookie.split('=')[1].strip()
         return session_id
+
+    @property
+    def session(self) -> Optional[Session]:
+        return self._session
+
+    @session.setter
+    def session(self, session: Session) -> None:
+        self._session = session

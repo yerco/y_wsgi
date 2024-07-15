@@ -2,6 +2,7 @@ from src.app_registry import AppRegistry
 from user_app.modules.user_module.repositories.repository import UserRepository
 from src.database.orm_initializer import initialize_orm
 from src.middleware.authentication_middleware import AuthenticationMiddleware
+from src.middleware.session_middleware import SessionMiddleware
 
 from user_app.modules.user_module.middleware.logging_middleware import LoggingMiddleware
 # from user_app.modules.user_module.middleware.authentication_middleware import AuthenticationMiddleware
@@ -22,9 +23,12 @@ orm = initialize_orm([User])
 # Create user module
 user_mod = app_registry.create_module('user_module', app)
 
-# Register user module middlewares
-# user_mod.use_middleware(LoggingMiddleware)
+# Register user module middlewares, order matters!
+# Apply SessionMiddleware first
+user_mod.use_middleware(SessionMiddleware)
+# Apply AuthenticationMiddleware after SessionMiddleware
 user_mod.use_middleware(AuthenticationMiddleware, public_routes=config.PUBLIC_ROUTES)
+
 
 # # Register user module hooks
 # user_mod.before_request(some_hooks.before_request_hook)

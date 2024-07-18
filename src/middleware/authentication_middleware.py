@@ -6,7 +6,7 @@ from src.auth.state import AuthContext, AuthenticatedState, UnauthenticatedState
 from src.core.request import Request
 from src.core.response import Response
 from src.middleware.middleware import Middleware
-from src.config import config
+from src.config_loader import load_config
 
 
 class AuthenticationMiddleware(Middleware):
@@ -15,8 +15,9 @@ class AuthenticationMiddleware(Middleware):
         super().__init__()
         self.auth_context = AuthContext()
         self.public_routes = public_routes
-        self.MAX_FAILED_ATTEMPTS = config.MAX_FAILED_ATTEMPTS
-        self.default_users = {user["username"]: user for user in config.DEFAULT_USERS}
+        self.config = load_config()
+        self.MAX_FAILED_ATTEMPTS = self.config['MAX_FAILED_ATTEMPTS']
+        self.default_users = {user["username"]: user for user in self.config['DEFAULT_USERS']}
 
     def before_request(self, request: Request):
         for public_route in self.public_routes:

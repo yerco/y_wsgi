@@ -5,13 +5,14 @@ from src.core.response import Response
 from src.middleware.middleware import Middleware
 from src.session.session_store import SessionStore
 from src.session.session import Session
-from src.config import config
+from src.config_loader import load_config
 
 
 class SessionMiddleware(Middleware):
     def __init__(self):
         super().__init__()
         self.session_store = SessionStore()
+        self.config = load_config()
 
     def before_request(self, request: Request) -> None:
         session_id = request.extract_session_id()
@@ -47,7 +48,6 @@ class SessionMiddleware(Middleware):
         request.session_id_to_set = cookie
 
     def _should_regenerate_id(self, session: Session) -> bool:
-        # Use config.SESSION_ID_ROTATION_INTERVAL if defined, otherwise use 1800
-        rotation_interval = config.SESSION_ID_ROTATION_INTERVAL if (config.SESSION_ID_ROTATION_INTERVAL
-                                                                    is not None) else 1800
+        rotation_interval = self.config['SESSION_ID_ROTATION_INTERVAL'] if (self.config['SESSION_ID_ROTATION_INTERVAL']
+                                                                            is not None) else 1800
         return (time.time() - session.created_at) > rotation_interval

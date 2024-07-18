@@ -7,11 +7,12 @@ from src.core.module import Module
 class AppRegistry:
     def __init__(self):
         self._apps: Dict[str, App] = {}
-        self.modules: Dict[str, 'Module'] = {}
+        self.modules: Dict[str, Module] = {}
 
     def create_app(self, name: str) -> App:
         if name in self._apps:
             raise ValueError(f'App with {name} already exists')
+
         app = App()
         self._apps[name] = app
         return app

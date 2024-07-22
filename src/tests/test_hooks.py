@@ -4,7 +4,7 @@ from src.core.response import Response
 
 
 def test_before_request_hook():
-    app = App()
+    app = App("test_app")
 
     def before_request_hook():
         app.hooks.called_before_request = True
@@ -19,7 +19,7 @@ def test_before_request_hook():
 
 
 def test_after_request_hook():
-    app = App()
+    app = App("test_app")
 
     def after_request_hook():
         app.hooks.called_after_request = True
@@ -37,7 +37,7 @@ def test_after_request_hook():
 
 
 def test_teardown_request_hook():
-    app = App()
+    app = App("test_app")
 
     def teardown_request_hook():
         app.hooks.called_teardown_request = True
@@ -52,7 +52,7 @@ def test_teardown_request_hook():
 
 
 def test_before_first_request_hook():
-    app = App()
+    app = App("test_app")
 
     def before_first_request_hook():
         app.hooks.called_before_first_request = True

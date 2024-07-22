@@ -1,7 +1,7 @@
 import pytest
 from src.app import App
 from src.tests.test_client import FrameworkTestClient
-from src.core.request import Request
+from src.core.request_context import RequestContext
 from src.core.response import Response
 from user_app.modules.user_module.middleware.logging_middleware import LoggingMiddleware
 from src.core.view import View
@@ -10,7 +10,7 @@ from typing import Dict, Any
 
 @pytest.fixture
 def app():
-    app = App()
+    app = App("test_app")
     return app
 
 
@@ -21,7 +21,7 @@ def client(app):
 
 def test_client_get_request(client):
     @client.app.route('/test')
-    def test_handler(request: Request) -> Response:
+    def test_handler(request: RequestContext) -> Response:
         return Response(status='200 OK', body=[b'Test GET Response'])
 
     response = client.get('/test')
@@ -31,7 +31,7 @@ def test_client_get_request(client):
 
 def test_client_post_request(client):
     @client.app.route('/test', methods=['POST'])
-    def test_handler(request: Request) -> Response:
+    def test_handler(context: RequestContext) -> Response:
         return Response(status='200 OK', body=[b'Test POST Response'])
 
     response = client.post('/test', data={'key': 'value'})
@@ -41,8 +41,8 @@ def test_client_post_request(client):
 
 def test_client_with_query_params(client):
     @client.app.route('/search')
-    def search_handler(request: Request) -> Response:
-        query_params = request.get_query_params()
+    def search_handler(context: RequestContext) -> Response:
+        query_params = context.get_query_params()
         print("Query Params:", query_params)  # Debugging output
         return Response(status='200 OK', body=[f'Search query: {query_params["query"][0]}'.encode()])
 
@@ -53,8 +53,8 @@ def test_client_with_query_params(client):
 
 def test_client_with_headers(client):
     @client.app.route('/header-test')
-    def headers_handler(request: Request) -> Response:
-        custom_header = request.headers.get('x-custom-header')
+    def headers_handler(context: RequestContext) -> Response:
+        custom_header = context.headers.get('x-custom-header')
         return Response(status='200 OK', body=[f'Custom Header: {custom_header}'.encode()])
 
     headers = {'X-Custom-Header': 'TestValue'}
@@ -67,7 +67,7 @@ def test_client_with_middleware(client):
     client.app.use_middleware(LoggingMiddleware)
 
     @client.app.route('/middleware')
-    def middleware_handler(request: Request) -> Response:
+    def middleware_handler(context: RequestContext) -> Response:
         return Response(status='200 OK', body=[b'Middleware Response'])
 
     response = client.get('/middleware')
@@ -77,7 +77,7 @@ def test_client_with_middleware(client):
 
 def test_client_with_view(client):
     class TestView(View):
-        def get(self, request: Request, params: Dict[str, Any] = None) -> Response:
+        def get(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
             return Response(status='200 OK', body=[b'Hello from View'])
 
     client.app.router.add_route('/view', TestView, methods=['GET'])

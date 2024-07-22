@@ -16,7 +16,7 @@ class TestMiddleware(Middleware):
 
 
 def test_middleware_registration():
-    app = App()
+    app = App("test_app")
     app.use_middleware(TestMiddleware)
 
     assert len(app.middlewares) == 1
@@ -24,7 +24,7 @@ def test_middleware_registration():
 
 
 def test_middleware_execution():
-    app = App()
+    app = App("test_app")
     app.use_middleware(TestMiddleware)
 
     request = Request({'REQUEST_METHOD': 'GET', 'PATH_INFO': '/test'})

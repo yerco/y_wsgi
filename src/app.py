@@ -3,9 +3,11 @@ from typing import Callable, Dict, Any, List, Tuple, Iterable, Type, Union, Opti
 from src.hooks.hooks import Hooks
 from src.middleware.middleware import Middleware
 from src.core.request import Request
+from src.core.request_context import RequestContext
 from src.core.response import Response
 from src.routing.router import Router
 from src.core.view import View
+from src.core.app_context import AppContext
 
 """
 A string (str) for the status.
@@ -18,10 +20,18 @@ HandlerType = Union[Type[View], Callable[[Request, Dict[str, Any]], Response]]
 
 
 class App:
-    def __init__(self):
+    def __init__(self, name: str):
+        self.name = name
         self.router = Router()
         self.middlewares: List[Middleware] = []
         self.hooks = Hooks()
+        self.context: Optional[AppContext] = None
+
+    def set_context(self, context: AppContext) -> None:
+        self.context = context
+
+    def get_context(self) -> Optional[AppContext]:
+        return self.context
 
     # decorator
     def route(self, path: str, methods: List[str] = None) -> Callable[[HandlerType], HandlerType]:
@@ -47,9 +57,7 @@ class App:
 
     def __call__(self, environ: Dict[str, Any], start_response: StartResponseType) -> Iterable[bytes]:
         request = Request(environ)
-        # print('request method: ', request.method)
-        # print('request.path', request.path)
-        # print('request.headers', request.headers)
+        request_context = RequestContext(request, self.context)
 
         # Apply before_first_request hooks
         if self.hooks.first_request:
@@ -58,19 +66,19 @@ class App:
             self.hooks.first_request = False
 
         # Apply middleware and before_request hooks
-        response = self._apply_before_request_middlewares_and_hooks(request)
+        response = self._apply_before_request_middlewares_and_hooks(request_context)
         if response:
             return self._start_response(response, start_response)
 
-        handler, params = self.router.match(request.path, request.method)
+        handler, params = self.router.match(request_context.path, request_context.method)
         # print(f"Matched handler: {handler}, Params: {params}")
 
         if handler:
             if isinstance(handler, type) and issubclass(handler, View):
                 handler_instance = handler()
-                response = handler_instance(request, **params)
+                response = handler_instance(request_context, **params)
             elif callable(handler):
-                response = handler(request, **params)
+                response = handler(request_context, **params)
             else:
                 response = Response(status='500 Internal Server Error', headers=[('Content-type', 'text/plain')],
                                     body=[b'Internal Server Error'])
@@ -83,13 +91,13 @@ class App:
                                 body=[b'Internal Server Error'])
 
         # Apply after_request hooks and middleware
-        response = self._apply_after_request_middlewares_and_hooks(request, response)
+        response = self._apply_after_request_middlewares_and_hooks(request_context, response)
         # Apply teardown_request hooks
-        self._apply_teardown_request_hooks(request)
+        self._apply_teardown_request_hooks(request_context.request)
 
         return self._start_response(response, start_response)
 
-    def _apply_before_request_middlewares_and_hooks(self, request: Request) -> Optional[Response]:
+    def _apply_before_request_middlewares_and_hooks(self, request_context: RequestContext) -> Optional[Response]:
         if self.hooks.first_request:
             for hook in self.hooks.before_first_request_hooks:
                 hook()
@@ -99,19 +107,19 @@ class App:
             hook()
 
         for middleware in self.middlewares:
-            response = middleware.before_request(request)
+            response = middleware.before_request(request_context)
             if response:
                 return response
         return None
 
-    def _apply_after_request_middlewares_and_hooks(self, request: Request, response: Response) -> Response:
+    def _apply_after_request_middlewares_and_hooks(self, request_context: RequestContext, response: Response) -> Response:
         for middleware in self.middlewares:
-            response = middleware.after_request(request, response)
+            response = middleware.after_request(request_context, response)
         for hook in self.hooks.after_request_hooks:
             hook()
         return response
 
-    def _apply_teardown_request_hooks(self, request: Request) -> None:
+    def _apply_teardown_request_hooks(self, request_context: Request) -> None:
         for hook in self.hooks.teardown_request_hooks:
             hook()
 

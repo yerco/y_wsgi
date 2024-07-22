@@ -1,9 +1,9 @@
 from typing import Callable, Dict, Any
-from src.core.request import Request
+from src.core.request_context import RequestContext
 from src.core.response import Response
 
 # Define a type alias for the method signatures
-HandlerFunction = Callable[[Request, Dict[str, Any]], Response]
+HandlerFunction = Callable[[RequestContext, Dict[str, Any]], Response]
 
 
 class View:
@@ -19,35 +19,35 @@ class View:
             'trace': self.trace,
         }
 
-    def __call__(self, request: Request, **params: Any) -> Response:
-        return self.execute(request, **params)
+    def __call__(self, request_context: RequestContext, **params: Any) -> Response:
+        return self.execute(request_context, **params)
 
-    def execute(self, request: Request, **params: Any) -> Response:
-        method = request.method.lower()
+    def execute(self, request_context: RequestContext, **params: Any) -> Response:
+        method = request_context.method.lower()
         handler_method = self.method_map.get(method, self.http_method_not_allowed)
-        return handler_method(request, **params)
+        return handler_method(request_context, **params)
 
-    def http_method_not_allowed(self, request: Request, params: Dict[str, Any]) -> Response:
+    def http_method_not_allowed(self, request_context: RequestContext, params: Dict[str, Any]) -> Response:
         return Response(status='405 Method Not Allowed', headers=[('Content-type', 'text/plain')],
                         body=[b'Method Not Allowed'])
 
-    def get(self, request: Request, params: Dict[str, Any] = None) -> Response:
-        return self.http_method_not_allowed(request, params)
+    def get(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
+        return self.http_method_not_allowed(request_context, params)
 
-    def post(self, request: Request, params: Dict[str, Any] = None) -> Response:
-        return self.http_method_not_allowed(request, params)
+    def post(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
+        return self.http_method_not_allowed(request_context, params)
 
-    def put(self, request: Request, params: Dict[str, Any] = None) -> Response:
-        return self.http_method_not_allowed(request, params)
+    def put(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
+        return self.http_method_not_allowed(request_context, params)
 
-    def delete(self, request: Request, params: Dict[str, Any] = None) -> Response:
-        return self.http_method_not_allowed(request, params)
+    def delete(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
+        return self.http_method_not_allowed(request_context, params)
 
-    def head(self, request: Request, params: Dict[str, Any] = None) -> Response:
-        return self.http_method_not_allowed(request, params)
+    def head(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
+        return self.http_method_not_allowed(request_context, params)
 
-    def options(self, request: Request, params: Dict[str, Any] = None) -> Response:
-        return self.http_method_not_allowed(request, params)
+    def options(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
+        return self.http_method_not_allowed(request_context, params)
 
-    def trace(self, request: Request, params: Dict[str, Any] = None) -> Response:
-        return self.http_method_not_allowed(request, params)
+    def trace(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
+        return self.http_method_not_allowed(request_context, params)

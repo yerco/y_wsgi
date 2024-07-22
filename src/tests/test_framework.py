@@ -11,7 +11,7 @@ from src.core.view import View
 
 @pytest.fixture
 def app():
-    app = App()
+    app = App("test_app")
     return app
 
 

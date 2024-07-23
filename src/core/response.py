@@ -1,12 +1,18 @@
-from typing import Union, Iterable, List, Tuple, Generator
+from typing import Union, Iterable, List, Tuple, Generator, Dict
 
 
 class Response:
     def __init__(self, body: Union[bytes, Iterable[bytes]] = b'', status: Union[int, str] = 200,
                  headers: List[Tuple[str, str]] = None) -> None:
+        if isinstance(body, str):
+            body = body.encode()
         self.body: Union[bytes, Iterable[bytes]] = body
         self._status: str = self._init_status(status)
-        self.headers: List[Tuple[str, str]] = headers or []
+        self.headers_dict = dict(headers) if headers else {}
+
+    @property
+    def headers(self) -> List[Tuple[str, str]]:
+        return list(self.headers_dict.items())
 
     # Converts an integer status code to a status message
     def _init_status(self, status: Union[int, str]) -> str:
@@ -38,17 +44,9 @@ class Response:
         }
         return status_messages.get(status_code, "Unknown Status")
 
-    # Adds a header to the response
-    def add_header(self, name: str, value: str) -> None:
-        self.headers.append((name, value))
-
     # Sets a header, replacing it if it already exists
     def set_header(self, name: str, value: str) -> None:
-        for i, (header_name, _) in enumerate(self.headers):
-            if header_name == name:
-                self.headers[i] = (name, value)
-                return
-        self.add_header(name, value)
+        self.headers_dict[name] = value
 
     def __iter__(self) -> Generator[bytes, None, None]:
         # Convert the body to an iterable

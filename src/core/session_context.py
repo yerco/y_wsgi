@@ -8,6 +8,10 @@ class SessionContext:
         self._session = session
 
     @property
+    def id(self) -> Optional[str]:
+        return self._session.id
+
+    @property
     def session(self) -> Optional[Session]:
         return self._session
 

@@ -1,4 +1,5 @@
 from typing import Any, Dict, Optional
+from urllib.parse import parse_qs
 
 from src.core.request import Request
 from src.core.session_context import SessionContext
@@ -58,5 +59,17 @@ class RequestContext:
     def user(self, user: Dict[str, Any]) -> None:
         self._user = user
 
-    # Add other methods to manage context-specific data
-    # ...
+    def get_form_data(self) -> Dict[str, str]:
+        if self.method in ("POST", "PUT", "PATCH", "DELETE"):
+            content_type = self.headers.get("Content-Type", "")
+            if 'application/x-www-form-urlencoded' in content_type:
+                return self.parse_form_urlencoded()
+            elif 'multipart/form-data' in content_type:
+                return self.parse_multipart()
+        return {}
+
+    def parse_form_urlencoded(self) -> Dict[str, str]:
+        return {k: v[0] for k, v in parse_qs(self.request.body.decode()).items()}
+
+    def parse_multipart(self) -> Dict[str, str]:
+        raise NotImplementedError("Multipart form data parsing is not implemented yet")

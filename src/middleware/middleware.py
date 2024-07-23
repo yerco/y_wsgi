@@ -5,6 +5,9 @@ from src.core.response import Response
 
 
 class Middleware:
+    def __init__(self, *args, **kwargs):
+        pass
+
     def before_request(self, request_context: RequestContext) -> Optional[Response]:
         """
         Process the request before it reaches the view.

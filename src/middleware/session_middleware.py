@@ -39,7 +39,7 @@ class SessionMiddleware(Middleware):
 
     def after_request(self, request_context: RequestContext, response: Response) -> Response:
         if hasattr(request_context.request, 'session_id_to_set'):
-            response.headers.append(('Set-Cookie', request_context.request.session_id_to_set))
+            response.set_header('Set-Cookie', request_context.request.session_id_to_set)
         return response
 
     def _set_session_id(self, request_context: RequestContext, session_id: str):

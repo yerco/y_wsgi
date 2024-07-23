@@ -1,7 +1,10 @@
 import pytest
 import time
+import os
+import sys
 
 from src.app_registry import AppRegistry
+from src.core.app_context import AppContext
 from src.database.orm_initializer import initialize_orm
 from src.middleware.session_middleware import SessionMiddleware
 from src.tests.test_client import FrameworkTestClient
@@ -10,11 +13,17 @@ from src.tests.views_for_testing import register_routes
 
 
 @pytest.fixture
-def app():
+def app(monkeypatch):
     # Create and instance of AppRegistry
     app_registry = AppRegistry()
+    base_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'apps')
+    sys.path.insert(0, base_dir)
+    # Mock the _get_app_base_dir method
+    def mock_get_app_base_dir(self, name):
+        return base_dir
+    monkeypatch.setattr(AppRegistry, '_get_app_base_dir', mock_get_app_base_dir)
     # Create an application instance
-    app = app_registry.create_app('test_app')
+    app = app_registry.create_app('dummy_app')
     # Initialize the ORM adapter
     orm = initialize_orm([ModelForTesting])
     # Create a test module
@@ -33,6 +42,7 @@ def client(app):
 def test_session_creation(client):
     response = client.get('/')
     assert response.status == '200 OK'
+    print(f"Response headers: {response.headers}")
     cookies = [header for header in response.headers if header[0].lower() == 'set-cookie']
     assert cookies, "No Set-Cookie header found"
     session_id = cookies[0][1].split('=')[1].split(';')[0]

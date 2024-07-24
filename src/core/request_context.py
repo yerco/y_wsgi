@@ -1,9 +1,12 @@
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, TYPE_CHECKING
 from urllib.parse import parse_qs
 
 from src.core.request import Request
 from src.core.session_context import SessionContext
 from src.core.app_context import AppContext
+
+if TYPE_CHECKING:
+    from src.app import App
 
 
 class RequestContext:
@@ -44,6 +47,20 @@ class RequestContext:
     @property
     def app_context(self) -> AppContext:
         return self._app_context
+
+    @property
+    def current_app(self) -> Optional['App']:
+        app_name = self.app_context.get_current_app_name()
+        if app_name:
+            return self.app_context.get_app_instance(app_name)
+        raise ValueError("No current app set in context.")
+
+    @property
+    def current_configuration(self) -> Dict[str, Any]:
+        app_name = self.app_context.get_current_app_name()
+        if app_name:
+            return self.app_context.get_config(app_name)
+        raise ValueError("No current app set in context.")
 
     def get_query_params(self) -> Dict[str, list[str]]:
         return self.request.get_query_params()

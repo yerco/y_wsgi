@@ -6,6 +6,8 @@ class Response:
                  headers: List[Tuple[str, str]] = None) -> None:
         if isinstance(body, str):
             body = body.encode()
+        elif isinstance(body, bytes):
+            body = [body]  # Ensure body is an iterable of bytes
         self.body: Union[bytes, Iterable[bytes]] = body
         self._status: str = self._init_status(status)
         self.headers_dict = dict(headers) if headers else {}

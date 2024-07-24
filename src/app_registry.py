@@ -24,8 +24,8 @@ class AppRegistry:
         config = load_config(name, base_dir)
         # print("Loaded config:", config)
         app_context = AppContext()
-        app_context.set_context(name, base_dir, config)
-        app_context.set_current_app(name)
+        app_context.set_context(name, base_dir, config, app)
+        app_context.set_current_app_name(name)
         app.set_context(app_context)
 
         self._apps[name] = app

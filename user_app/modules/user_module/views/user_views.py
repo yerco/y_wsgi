@@ -1,7 +1,9 @@
 import json
+
 from typing import List, Tuple
 
 from src.core.request import Request
+from src.core.request_context import RequestContext
 from src.core.response import Response
 from src.database.orm_interface import ORMInterface
 
@@ -9,6 +11,18 @@ from user_app.modules.user_module.models.models import User
 
 
 def register_routes(module, orm: ORMInterface):
+    @module.route('/user_app_page', methods=['GET'])
+    def user_app_page(request_context: RequestContext):
+        template_vars = {
+            'title': 'This is the user_app',
+            'message': 'We are in the module user_module'
+        }
+
+        current_app = request_context.current_app
+        # current_configuration = request_context.current_configuration
+        rendered_template = current_app.render_template('user_app_page.html', template_vars)
+        return Response(status='200 OK', body=[rendered_template.encode('utf-8')])
+
     @module.route('/json')
     def json_handler(request: Request) -> Response:
         data = {'message': 'Hello, JSON!'}

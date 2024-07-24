@@ -4,6 +4,7 @@ from src.database.orm_initializer import initialize_orm
 from src.middleware.authentication_middleware import AuthenticationMiddleware
 from src.middleware.session_middleware import SessionMiddleware
 from src.middleware.csrf_middleware import CSRFMiddleware
+from src.middleware.static_middleware import StaticMiddleware
 
 from user_app.modules.user_module.middleware.logging_middleware import LoggingMiddleware
 # from user_app.modules.user_module.middleware.authentication_middleware import AuthenticationMiddleware
@@ -25,7 +26,8 @@ orm = initialize_orm([User])
 user_mod = app_registry.create_module('user_module', app)
 
 # Register user module middlewares, order matters!
-# Apply SessionMiddleware first
+user_mod.use_middleware(StaticMiddleware)
+# Apply SessionMiddleware
 user_mod.use_middleware(SessionMiddleware)
 # Apply CSRFMiddleware after SessionMiddleware and before AuthenticationMiddleware
 user_mod.use_middleware(CSRFMiddleware, secret_key=config.SECRET_KEY)

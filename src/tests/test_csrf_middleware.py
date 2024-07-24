@@ -59,7 +59,7 @@ def test_before_request_invalid_token(csrf_middleware, request_context, method):
     request_context.get_form_data = MagicMock(return_value={'csrf_token': 'invalid_token'})
     response = csrf_middleware.before_request(request_context)
     assert isinstance(response, Response)
-    assert response.body == b"Invalid CSRF Token"
+    assert b"".join(response.body) == b"Invalid CSRF Token"  # Join the body parts for the assertion
     assert response._status == '403 Forbidden'
 
 

@@ -29,11 +29,11 @@ class Dispatcher:
             app: App
             if path.startswith(prefix):
                 # print(f"Setting context for app: {app.name}")
-                app.context.set_current_app(app.name)
+                app.context.set_current_app_name(app.name)
                 try:
                     return app(environ, start_response)
                 finally:
                     # print("Resetting Current app Context name to None")
-                    app.context.set_current_app(None)
+                    app.context.set_current_app_name(None)
         response = Response(status='404 Not Found', body=[b'Not Found'])
         return response(environ, start_response)

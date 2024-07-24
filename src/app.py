@@ -8,6 +8,9 @@ from src.core.response import Response
 from src.routing.router import Router
 from src.core.view import View
 from src.core.app_context import AppContext
+from src.templates.template_engine import TemplateEngine
+from src.templates.simple_template_engine import SimpleTemplateEngine
+from src.utils.template_scanner import TemplateScanner
 
 """
 A string (str) for the status.
@@ -20,12 +23,37 @@ HandlerType = Union[Type[View], Callable[[Request, Dict[str, Any]], Response]]
 
 
 class App:
-    def __init__(self, name: str):
+    def __init__(self, name: str, template_engine: Optional[TemplateEngine] = None):
         self.name = name
         self.router = Router()
         self.middlewares: List[Middleware] = []
         self.hooks = Hooks()
         self.context: Optional[AppContext] = None
+
+        # Initialize the template engine
+        if template_engine is None:
+            self.template_engine = SimpleTemplateEngine(template_dir='templates')
+        else:
+            self.template_engine = template_engine
+
+        # Scan for template directories
+        try:
+            self.template_directory = self.scan_template_directory()
+            module, module_templates_dir = list(self.template_directory.items())[0]
+            self.template_engine.template_dir = module_templates_dir
+        except FileNotFoundError as e:
+            print(f"Template directory not found: {e}")
+
+    def scan_template_directory(self) -> Dict[str, str]:
+        scanner = TemplateScanner(base_dir=self.get_base_dir())
+        return scanner.scan()
+
+    def get_base_dir(self) -> str:
+        if self.context:
+            app_config = self.context.get_config(self.name)
+            if app_config:
+                return app_config.get('base_dir', '.')
+        return '.'
 
     def set_context(self, context: AppContext) -> None:
         self.context = context
@@ -137,3 +165,6 @@ class App:
 
         # An iterable yielding byte strings
         return response.body
+
+    def render_template(self, template_name: str, template_vars: Dict[str, Any]) -> str:
+        return self.template_engine.render(template_name, template_vars)

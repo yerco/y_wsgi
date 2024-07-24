@@ -11,7 +11,9 @@ class Config:
 
     SESSION_EXPIRY = 5600  # Session expiry time in seconds (e.g., 1 hour)
     SESSION_ID_ROTATION_INTERVAL = 800000  # Session ID rotation interval in seconds (e.g., 30 minutes)
-    # Framework-specific configuration
+
+    # Jinja2 configuration
+    TEMPLATE_ENGINE = "jinja2"
 
 
 config = Config()

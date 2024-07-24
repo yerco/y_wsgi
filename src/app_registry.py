@@ -16,12 +16,11 @@ class AppRegistry:
         if name in self._apps:
             raise ValueError(f'App with {name} already exists')
 
-        app = App(name)
-
         # Set the AppContext for this specific app
         base_dir = self._get_app_base_dir(name)
         # print("Checking base dir:", base_dir)
         config = load_config(name, base_dir)
+        app = App(name, config['TEMPLATE_ENGINE'] if 'TEMPLATE_ENGINE' in config else None)
         # print("Loaded config:", config)
         app_context = AppContext()
         app_context.set_context(name, base_dir, config, app)

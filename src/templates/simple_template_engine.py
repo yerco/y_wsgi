@@ -13,12 +13,12 @@ class SimpleTemplateEngine(TemplateEngine):
         with open(f"{self.template_dir}/{template_name}", "r") as template_file:
             return template_file.read()
 
-    def render(self, template_name: str, context: Dict[str, Any]) -> str:
+    def render(self, template_name: str, template_vars: Dict[str, Any]) -> str:
         template = self.load_template(template_name)
 
         def replace_placeholder(match):
             key = match.group(1).strip()
-            return str(context.get(key, f"{{{{ {key} }}}}"))  # Keep the placeholder if key not found
+            return str(template_vars.get(key, f"{{{{ {key} }}}}"))  # Keep the placeholder if key not found
 
         pattern = re.compile(r"{{\s*(\w+)\s*}}")
         rendered_template = re.sub(pattern, replace_placeholder, template)

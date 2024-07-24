@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User App Page</title>
+    <title>{{ title }}</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -44,6 +44,19 @@
             width: 100%;
             bottom: 0;
         }
+        .dynamic-content {
+            margin-top: 2em;
+        }
+        .dynamic-content ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .dynamic-content li {
+            background-color: #eee;
+            margin: 0.5em 0;
+            padding: 0.5em;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -53,8 +66,25 @@
 <div class="container">
     <img src="../assets/images/y_wsgi.logo.png" alt="y_wsgi Logo" class="logo">
     <h1>{{ title }}</h1>
-    <p>This is a demo application built with the <strong>y_wsgi</strong> framework. This framework is developed for learning purposes. Feel free to use it as you please.</p>
-    <p>Please refer to the documentation to understand how to use the framework and create your own applications. Once you are familiar with the framework, you can delete this demo app.</p>
+    <p>Hereby we are showing how to use Jinja2 as templating engine</p>
+
+    <div class="dynamic-content">
+        <h2>Features:</h2>
+        <ul>
+            {% for feature in features %}
+            <li>{{ feature }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="dynamic-content">
+        <h2>Conditional Content:</h2>
+        {% if user %}
+        <p>Hello, {{ user }}! Welcome back.</p>
+        {% else %}
+        <p>Hello, Guest! Please log in.</p>
+        {% endif %}
+    </div>
 </div>
 <div class="footer">
     <p>&copy; 2024 y_wsgi Framework. All lefts reserved.</p>

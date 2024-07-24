@@ -11,6 +11,7 @@ from src.core.app_context import AppContext
 from src.templates.template_engine import TemplateEngine
 from src.templates.simple_template_engine import SimpleTemplateEngine
 from src.utils.template_scanner import TemplateScanner
+from src.templates.jinja2_template_engine import Jinja2TemplateEngine
 
 """
 A string (str) for the status.
@@ -23,26 +24,24 @@ HandlerType = Union[Type[View], Callable[[Request, Dict[str, Any]], Response]]
 
 
 class App:
-    def __init__(self, name: str, template_engine: Optional[TemplateEngine] = None):
+    def __init__(self, name: str, template_engine: str = None):
         self.name = name
         self.router = Router()
         self.middlewares: List[Middleware] = []
         self.hooks = Hooks()
         self.context: Optional[AppContext] = None
 
+        # Scan for template directories
+        self.template_directory = self.scan_template_directory()
+        module, module_templates_dir = list(self.template_directory.items())[0]
+
         # Initialize the template engine
         if template_engine is None:
-            self.template_engine = SimpleTemplateEngine(template_dir='templates')
+            self.template_engine = SimpleTemplateEngine(template_dir=module_templates_dir)
+        elif template_engine == 'jinja2':
+            self.template_engine = Jinja2TemplateEngine(template_dir=module_templates_dir)
         else:
-            self.template_engine = template_engine
-
-        # Scan for template directories
-        try:
-            self.template_directory = self.scan_template_directory()
-            module, module_templates_dir = list(self.template_directory.items())[0]
-            self.template_engine.template_dir = module_templates_dir
-        except FileNotFoundError as e:
-            print(f"Template directory not found: {e}")
+            raise ValueError(f"Unknown engine type: {template_engine}")
 
     def scan_template_directory(self) -> Dict[str, str]:
         scanner = TemplateScanner(base_dir=self.get_base_dir())

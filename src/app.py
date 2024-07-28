@@ -1,3 +1,5 @@
+import os
+
 from typing import Callable, Dict, Any, List, Tuple, Iterable, Type, Union, Optional
 
 from src.hooks.hooks import Hooks
@@ -8,9 +10,7 @@ from src.core.response import Response
 from src.routing.router import Router
 from src.core.view import View
 from src.core.app_context import AppContext
-from src.templates.template_engine import TemplateEngine
 from src.templates.simple_template_engine import SimpleTemplateEngine
-from src.utils.template_scanner import TemplateScanner
 from src.templates.jinja2_template_engine import Jinja2TemplateEngine
 
 """
@@ -20,7 +20,7 @@ An optional third argument of any type (Any) for exception information.
 """
 StartResponseType = Callable[[str, List[Tuple[str, str]], Any], None]
 
-HandlerType = Union[Type[View], Callable[[Request, Dict[str, Any]], Response]]
+HandlerType = Union[Type[View], Callable[[RequestContext, Dict[str, Any]], Response]]
 
 
 class App:
@@ -30,22 +30,15 @@ class App:
         self.middlewares: List[Middleware] = []
         self.hooks = Hooks()
         self.context: Optional[AppContext] = None
-
-        # Scan for template directories
-        self.template_directory = self.scan_template_directory()
-        module, module_templates_dir = list(self.template_directory.items())[0]
+        self.modules: Dict[str, Any] = {}
 
         # Initialize the template engine
         if template_engine is None:
-            self.template_engine = SimpleTemplateEngine(template_dir=module_templates_dir)
+            self.template_engine = SimpleTemplateEngine()
         elif template_engine == 'jinja2':
-            self.template_engine = Jinja2TemplateEngine(template_dir=module_templates_dir)
+            self.template_engine = Jinja2TemplateEngine()
         else:
             raise ValueError(f"Unknown engine type: {template_engine}")
-
-    def scan_template_directory(self) -> Dict[str, str]:
-        scanner = TemplateScanner(base_dir=self.get_base_dir())
-        return scanner.scan()
 
     def get_base_dir(self) -> str:
         if self.context:
@@ -60,10 +53,27 @@ class App:
     def get_context(self) -> Optional[AppContext]:
         return self.context
 
+    def add_module(self, module_name: str, module: Any) -> None:
+        self.modules[module_name] = module
+
     # decorator
     def route(self, path: str, methods: List[str] = None) -> Callable[[HandlerType], HandlerType]:
         def wrapper(handler: HandlerType) -> HandlerType:
-            self.router.add_route(path, handler, methods)
+            if isinstance(handler, type):
+                module_views_dir = os.path.dirname(os.path.abspath(handler.__init__.__code__.co_filename))
+            else:
+                module_views_dir = os.path.dirname(os.path.abspath(handler.__code__.co_filename))
+            module_dir = os.path.dirname(module_views_dir)
+
+            def wrapped_handler(request_context: RequestContext, *args, **kwargs):
+                self.context.set_current_module_dir(module_dir)
+                if isinstance(handler, type):
+                    handler_instance = handler()
+                    return handler_instance(request_context, *args, **kwargs)
+                else:
+                    return handler(request_context, *args, **kwargs)
+
+            self.router.add_route(path, module_dir, wrapped_handler, methods)
             return handler
         return wrapper
 
@@ -166,4 +176,5 @@ class App:
         return response.body
 
     def render_template(self, template_name: str, template_vars: Dict[str, Any]) -> str:
-        return self.template_engine.render(template_name, template_vars)
+        template_dir = self.context.get_current_module_dir() + '/templates'
+        return self.template_engine.render(template_dir, template_name, template_vars)

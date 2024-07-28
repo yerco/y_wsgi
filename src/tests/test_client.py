@@ -1,11 +1,13 @@
 from typing import Dict, Any, Optional, List, Tuple
 from src.app import App
+from src.core.app_context import AppContext
 from src.core.response import Response
 
 
 class FrameworkTestClient:
     def __init__(self, app: App):
         self.app = app
+        self.app.set_context(AppContext())
         self.response_headers: List[Tuple[str, str]] = []
 
     def _make_request(self, method: str, path: str, data: Optional[Dict[str, Any]] = None,

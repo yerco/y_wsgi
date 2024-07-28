@@ -1,5 +1,5 @@
 import os
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from src.app import App
 from src.core.module import Module
@@ -10,37 +10,54 @@ from src.config_loader import load_config
 class AppRegistry:
     def __init__(self):
         self._apps: Dict[str, App] = {}
-        self.modules: Dict[str, Module] = {}
 
     def create_app(self, name: str) -> App:
         if name in self._apps:
             raise ValueError(f'App with {name} already exists')
 
-        # Set the AppContext for this specific app
-        base_dir = self._get_app_base_dir(name)
-        # print("Checking base dir:", base_dir)
-        config = load_config(name, base_dir)
-        app = App(name, config['TEMPLATE_ENGINE'] if 'TEMPLATE_ENGINE' in config else None)
-        # print("Loaded config:", config)
-        app_context = AppContext()
-        app_context.set_context(name, base_dir, config, app)
-        app_context.set_current_app_name(name)
-        app.set_context(app_context)
+        try:
+            # Set the AppContext for this specific app
+            base_dir = self._get_app_base_dir(name)
+            # print("Checking base dir:", base_dir)
+            config = load_config(name, base_dir)
+            app = App(name, config['TEMPLATE_ENGINE'] if 'TEMPLATE_ENGINE' in config else None)
+            # print("Loaded config:", config)
+            app_context = AppContext()
+            app_context.set_context(name, base_dir, config, app)
+            app_context.set_current_app_name(name)
+            app.set_context(app_context)
 
-        self._apps[name] = app
+            self._apps[name] = app
 
-        return app
+            return app
+        except KeyError as e:
+            raise ValueError(f'Missing required configuration key: {e}')
+        except Exception as e:
+            raise RuntimeError(f'Error creating app {name}: {e}')
 
-    def create_module(self, name: str, app: App) -> Module:
-        module = Module(name, app)
-        self.modules[name] = module
+    def create_module(self, module_name: str, app: App) -> Module:
+        if app.name not in self._apps:
+            raise ValueError(f'App {app.name} does not exist')
+        base_dir = self._get_app_base_dir(app.name)
+        module_dir = os.path.join(base_dir, app.name, module_name)
+        module = Module(module_name, app, module_dir)
+        app.add_module(module_name, module)
         return module
 
     def get_app(self, name: str) -> App:
-        return self._apps.get(name)
+        app = self._apps.get(name)
+        if app:
+            app.get_context().set_current_app_name(name)
+        return app
 
-    def list_apps(self) -> Dict[str, App]:
-        return self._apps
+    def get_module(self, app_name: str, module_name: str) -> Module:
+        app = self.get_app(app_name)
+        if app:
+            return app.modules.get(module_name)
+        raise ValueError(f'App {app_name} does not exist')
+
+    def list_apps(self) -> List[str]:
+        return list(self._apps.keys())
 
     @staticmethod
     def _get_app_base_dir(app_name: str) -> str:

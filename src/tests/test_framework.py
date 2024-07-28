@@ -25,7 +25,7 @@ def test_route_registration(app):
     def test_handler(req: Request) -> Response:
         return Response(status='200 OK', body=[b'Test'])
 
-    router.add_route('/test', test_handler, methods=['GET'])
+    router.add_route('/test', 'module_dir', test_handler, methods=['GET'])
     assert len(router.routes) == 1
     assert isinstance(router.routes[0], LazyRoute)
 
@@ -44,7 +44,7 @@ def test_request_processing(app):
     def test_handler(req: Request) -> Response:
         return Response(status='200 OK', body=[b'Test'])
 
-    app.router.add_route('/test', test_handler, methods=['GET'])
+    app.router.add_route('/test', 'module_dir', test_handler, methods=['GET'])
 
     response = app(environ, start_response)
     assert response is not None
@@ -56,7 +56,7 @@ def test_view_execution(app):
         def get(self, request: Request, params: Dict[str, Any] = None) -> Response:
             return Response(status='200 OK', body=[b'Hello from View'])
 
-    app.router.add_route('/view', TestView, methods=['GET'])
+    app.router.add_route('/view', 'module_dir', TestView, methods=['GET'])
 
     environ = {
         'REQUEST_METHOD': 'GET',

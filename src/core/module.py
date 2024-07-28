@@ -7,11 +7,12 @@ from src.hooks.hooks import Hooks
 
 
 class Module:
-    def __init__(self, name: str, app: App):
+    def __init__(self, name: str, app: App, directory: str):
         self.name = name
         self.app = app
         self.middlewares: List[Middleware] = []
         self.hooks = Hooks()
+        self.directory = directory
 
     def use_middleware(self, middleware_cls: Type[Middleware], *args: Any, **kwargs: Any) -> None:
         middleware_instance = middleware_cls(*args, **kwargs)

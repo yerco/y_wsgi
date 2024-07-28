@@ -16,8 +16,8 @@ class Router:
         for path, handler, methods in routes:
             self.add_route(path, handler, methods)
 
-    def add_route(self, path: str, handler: HandlerType, methods: List[str]) -> None:
-        self.routes.append(LazyRoute(path, handler_factory=lambda: handler, methods=methods))
+    def add_route(self, path: str, module_dir: str, handler: HandlerType, methods: List[str]) -> None:
+        self.routes.append(LazyRoute(path, module_dir=module_dir, handler_factory=lambda: handler, methods=methods))
 
     def match(self, path: str, method: str) -> Tuple[Optional[HandlerType], Dict[str, str]]:
         # Strip query parameters from the path
@@ -29,3 +29,9 @@ class Router:
                 return match
         print("No route matched")
         return None, {}
+
+    def get_module_dir(self, path: str) -> Optional[str]:
+        for route, module_dir, handler, methods in self.routes:
+            if path == route:
+                return module_dir
+        return None

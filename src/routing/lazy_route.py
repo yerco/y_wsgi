@@ -9,9 +9,10 @@ HandlerType = Union[Type[View], Callable[..., Response]]
 
 
 class LazyRoute:
-    def __init__(self, path: str, handler_factory: Optional[Callable[[], HandlerType]] = None,
+    def __init__(self, path: str, module_dir: str, handler_factory: Optional[Callable[[], HandlerType]] = None,
                  methods: List[str] = None) -> None:
         self.path = path
+        self.module_dir = module_dir
         self._handler = None
         self._handler_factory = handler_factory
         self.methods = methods if methods else ['GET']

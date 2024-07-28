@@ -10,7 +10,7 @@ def test_route_matching():
     def test_handler(req):
         return Response(status='200 OK', body=[b'Test Route'])
 
-    router.add_route('/test', test_handler, methods=methods)
+    router.add_route('/test', 'module_dir', test_handler, methods=methods)
     handler, params = router.match('/test', 'GET')
 
     assert handler is not None
@@ -25,7 +25,8 @@ def test_route_matching():
 def test_route_not_found():
     router = Router()
     methods = ['GET']
-    router.add_route('/test', lambda req: Response(status='200 OK', body=[b'Test Route']), methods=methods)
+    router.add_route('/test', 'module_dir', lambda req: Response(status='200 OK', body=[b'Test Route']),
+                     methods=methods)
 
     handler, params = router.match('/notfound', 'GET')
     assert handler is None
@@ -35,7 +36,8 @@ def test_route_not_found():
 def test_method_not_allowed():
     router = Router()
     methods = ['GET']
-    router.add_route('/test', lambda req: Response(status='200 OK', body=[b'Test Route']), methods=methods)
+    router.add_route('/test', 'module_dir', lambda req: Response(status='200 OK', body=[b'Test Route']),
+                     methods=methods)
 
     handler, params = router.match('/test', 'POST')
     assert handler is None
@@ -49,7 +51,7 @@ def test_dynamic_route_matching():
     def user_handler(req: Request, id: int) -> Response:
         return Response(status='200 OK', body=[f'User {id}'.encode()])
 
-    router.add_route('/user/<int:id>', user_handler, methods=methods)
+    router.add_route('/user/<int:id>', 'module_dir', user_handler, methods=methods)
 
     handler, params = router.match('/user/42', 'GET')
     assert handler is not None
@@ -64,7 +66,8 @@ def test_dynamic_route_matching():
 def test_multiple_methods():
     router = Router()
     methods = ['GET', 'POST']
-    router.add_route('/test', lambda req: Response(status='200 OK', body=[b'Test Route']), methods=methods)
+    router.add_route('/test', 'module_dir', lambda req: Response(status='200 OK', body=[b'Test Route']),
+                     methods=methods)
 
     handler, params = router.match('/test', 'GET')
     assert handler is not None
@@ -82,7 +85,8 @@ def test_multiple_methods():
 def test_route_with_query_parameters():
     router = Router()
     methods = ['GET']
-    router.add_route('/test', lambda req: Response(status='200 OK', body=[b'Test Route']), methods=methods)
+    router.add_route('/test', 'module_dir', lambda req: Response(status='200 OK', body=[b'Test Route']),
+                     methods=methods)
 
     handler, params = router.match('/test?query=param', 'GET')
     assert handler is not None

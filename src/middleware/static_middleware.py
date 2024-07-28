@@ -1,8 +1,8 @@
 import os
+
 from typing import Optional
 
 from src.core.request_context import RequestContext
-from src.utils.template_scanner import TemplateScanner
 from src.middleware.middleware import Middleware
 from src.core.response import Response
 
@@ -12,23 +12,20 @@ class StaticMiddleware(Middleware):
         super().__init__()
 
     def before_request(self, request_context: RequestContext) -> Optional[Response]:
-        app = request_context.current_app
-        current_config = request_context.current_configuration
-        scanner = TemplateScanner(base_dir=current_config.get('base_dir', '.'))
-        template_directory = scanner.scan()
-        module, module_templates_dir = list(template_directory.items())[0]
-        assets_dir = os.path.abspath(os.path.join(module_templates_dir, '..', 'assets'))
+        path_info = request_context.request.environ.get('PATH_INFO', '').lstrip('/')
 
-        path_info = request_context.request.environ.get('PATH_INFO', '')
-        if path_info.startswith('/assets/'):
-            relative_path = path_info.lstrip('/')
-            file_path = os.path.join(assets_dir, os.path.relpath(relative_path, 'assets'))
-
-            if os.path.isfile(file_path):
-                with open(file_path, 'rb') as f:
+        # Check if the request is for a static file
+        if path_info.startswith('assets/'):
+            app_context = request_context.current_app.context
+            app_config = app_context.get_config(request_context.current_app.name)
+            base_dir = app_config.get('BASE_DIR', '.')
+            target_asset = f"{base_dir}/{path_info}"
+            if os.path.exists(target_asset):
+                with open(target_asset, 'rb') as f:
                     file_content = f.read()
-                    content_type = self.get_content_type(file_path)
-                return Response(body=file_content, status='200 OK', headers=[('Content-Type', content_type)])
+                content_type = self.get_content_type(target_asset)
+                return Response(body=[file_content], status='200 OK', headers=[('Content-Type', content_type)])
+
         return None
 
     def get_content_type(self, file_path: str) -> str:

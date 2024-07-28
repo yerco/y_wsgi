@@ -80,7 +80,7 @@ def test_client_with_view(client):
         def get(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
             return Response(status='200 OK', body=[b'Hello from View'])
 
-    client.app.router.add_route('/view', TestView, methods=['GET'])
+    client.app.router.add_route('/view', 'module_dir', TestView, methods=['GET'])
 
     response = client.get('/view')
     assert response.status == '200 OK'

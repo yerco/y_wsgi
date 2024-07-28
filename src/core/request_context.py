@@ -15,6 +15,7 @@ class RequestContext:
         self._session_context: Optional[SessionContext] = None
         self._app_context = app_context
         self._user: Optional[Dict[str, Any]] = None
+        self.current_module_dir: Optional[str] = None
 
     @property
     def method(self) -> str:
@@ -90,3 +91,9 @@ class RequestContext:
 
     def parse_multipart(self) -> Dict[str, str]:
         raise NotImplementedError("Multipart form data parsing is not implemented yet")
+
+    def set_current_module_dir(self, module_dir: str) -> None:
+        self.current_module_dir = module_dir
+
+    def get_current_module_dir(self) -> Optional[str]:
+        return self.current_module_dir

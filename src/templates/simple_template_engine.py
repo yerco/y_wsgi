@@ -1,4 +1,5 @@
 import re
+import os
 
 from typing import Any, Dict
 
@@ -6,15 +7,10 @@ from src.templates.template_engine import TemplateEngine
 
 
 class SimpleTemplateEngine(TemplateEngine):
-    def __init__(self, template_dir: str):
-        self.template_dir = template_dir
-
-    def load_template(self, template_name: str) -> str:
-        with open(f"{self.template_dir}/{template_name}", "r") as template_file:
-            return template_file.read()
-
-    def render(self, template_name: str, template_vars: Dict[str, Any]) -> str:
-        template = self.load_template(template_name)
+    def render(self, template_dir: str, template_name: str, template_vars: Dict[str, Any]) -> str:
+        template_path = os.path.join(template_dir, template_name)
+        with open(template_path, "r") as template_file:
+            template = template_file.read()
 
         def replace_placeholder(match):
             key = match.group(1).strip()

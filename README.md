@@ -109,3 +109,68 @@ def register_routes(module, orm: ORMInterface):
         return Response(status=status, headers=headers, body=[json.dumps(data).encode('utf-8')])
 ```
 In this example, the `json_handler` view is registered with the user_module and is accessible via the `/json route.
+
+### Setting Up Assets and Templates
+
+#### Templates
+In this framework, templates are organized within each module of your app. 
+This structure allows for modular and organized template management. 
+Here’s how you should set up your templates:
+1. Module Templates: Each module should have its own templates directory.
+2. Template Files: Place your HTML template files within the templates directory of each module.
+Example Directory Structure
+```bash
+your_app/
+    ├── __init__.py
+    ├── config.py
+    ├── module1/
+    │   ├── __init__.py
+    │   ├── views.py
+    │   └── templates/
+    │       └── template1.html
+    ├── module2/
+    │   ├── __init__.py
+    │   ├── views.py
+    │   └── templates/
+    │       └── template2.html
+    └── module3/
+        ├── __init__.py
+        ├── views.py
+        └── templates/
+            └── template3.html
+```
+
+#### Assets
+Assets such as images, CSS, and JavaScript files should be placed in a single `assets` directory within each app. 
+This centralizes the management of static files for easier access and better performance.
+1. App Assets: Create an assets directory within your app directory.
+2. Static Files: Place your static files (images, CSS, JavaScript) within this directory.
+Example Directory Structure
+```bash
+your_app/
+    ├── __init__.py
+    ├── config.py
+    ├── assets/
+    │   ├── css/
+    │   │   └── styles.css
+    │   ├── js/
+    │   │   └── scripts.js
+    │   └── images/
+    │       └── logo.png
+    ├── module1/
+    │   ├── __init__.py
+    │   ├── views.py
+    │   └── templates/
+    │       └── template1.html
+    ├── module2/
+    │   ├── __init__.py
+    │   ├── views.py
+    │   └── templates/
+    │       └── template2.html
+    └── module3/
+        ├── __init__.py
+        ├── views.py
+        └── templates/
+            └── template3.html
+```
+

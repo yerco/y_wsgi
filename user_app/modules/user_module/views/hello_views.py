@@ -1,3 +1,5 @@
+import os
+
 from user_app.modules.user_module.views.common_handlers import HelloWorldHandler
 from src.core.request_context import RequestContext
 from src.core.response import Response

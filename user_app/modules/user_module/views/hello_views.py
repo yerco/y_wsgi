@@ -17,6 +17,7 @@ def register_routes(module):
             'title': 'Jinja2 Integration',
             'features': ['Dynamic templating', 'Flexible design', 'Easy integration'],
             'user': 'John Doe',
+            'nonce': request_context.request.environ.get('nonce')
         }
         current_app = request_context.current_app
         rendered_template = current_app.render_template('jinja2.html', template_vars)

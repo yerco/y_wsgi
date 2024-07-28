@@ -15,7 +15,8 @@ def register_routes(module, orm: ORMInterface):
     def user_app_page(request_context: RequestContext):
         template_vars = {
             'title': 'This is the user_app',
-            'message': 'We are in the module user_module'
+            'message': 'We are in the module user_module',
+            'nonce': request_context.request.environ.get('nonce')
         }
 
         current_app = request_context.current_app

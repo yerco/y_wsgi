@@ -1,5 +1,6 @@
 import re
 import os
+import html
 
 from typing import Any, Dict
 
@@ -14,7 +15,8 @@ class SimpleTemplateEngine(TemplateEngine):
 
         def replace_placeholder(match):
             key = match.group(1).strip()
-            return str(template_vars.get(key, f"{{{{ {key} }}}}"))  # Keep the placeholder if key not found
+            value = template_vars.get(key, f"{{{{ {key} }}}}")  # Keep the placeholder if key not found
+            return html.escape(str(value))  # Escape the value
 
         pattern = re.compile(r"{{\s*(\w+)\s*}}")
         rendered_template = re.sub(pattern, replace_placeholder, template)

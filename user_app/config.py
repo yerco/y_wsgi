@@ -10,7 +10,7 @@ class UserAppConfig:
     DATABASE_URL = os.getenv("USER_APP_DATABASE_URL", "sqlite:///./user_app.db")
 
     PUBLIC_ROUTES = ["/", "/greet", "/greet/[^/]+", "/about", "/users", "/create_user",
-                     r"/user/\d+", "/filter_users/[^/]+", "/user_app_page", "/jinja2", "/assets/images/[^/]+"]  # "/json" removed
+                     r"/user/\d+", "/filter_users/[^/]+", "/user_app_page", "/jinja2", ]  # "/json" removed
 
     # Jinja2 configuration
     TEMPLATE_ENGINE = "jinja2"

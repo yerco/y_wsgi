@@ -19,5 +19,10 @@ class Config:
     SESSION_ID_ROTATION_INTERVAL = 1800  # Session ID rotation interval in seconds (e.g., 30 minutes)
     # Framework-specific configuration
 
+    # Define the allowed origins, methods, and headers
+    ALLOWED_ORIGINS = ["https://example.com", "https://anotherdomain.com"]
+    ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    ALLOWED_HEADERS = ["Content-Type", "Authorization"]
+
 
 config = Config()

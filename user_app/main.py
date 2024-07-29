@@ -6,6 +6,7 @@ from src.middleware.session_middleware import SessionMiddleware
 from src.middleware.csrf_middleware import CSRFMiddleware
 from src.middleware.static_middleware import StaticMiddleware
 from src.middleware.xss_protection_middleware import XSSProtectionMiddleware
+from src.middleware.cors_middleware import CORSMiddleware
 
 from user_app.modules.user_module.middleware.logging_middleware import LoggingMiddleware
 # from user_app.modules.user_module.middleware.authentication_middleware import AuthenticationMiddleware
@@ -27,7 +28,9 @@ orm = initialize_orm([User])
 user_mod = app_registry.create_module('user_module', app)
 
 # Register user module middlewares, order matters!
-user_mod.use_middleware(XSSProtectionMiddleware)
+user_mod.use_middleware(CORSMiddleware, allowed_origins=config.ALLOWED_ORIGINS, allowed_methods=config.ALLOWED_METHODS,
+                        allowed_headers=config.ALLOWED_HEADERS)
+# user_mod.use_middleware(XSSProtectionMiddleware)
 user_mod.use_middleware(StaticMiddleware)
 # Apply SessionMiddleware
 user_mod.use_middleware(SessionMiddleware)

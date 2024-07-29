@@ -15,5 +15,9 @@ class UserAppConfig:
     # Jinja2 configuration
     TEMPLATE_ENGINE = "jinja2"
 
+    ALLOWED_ORIGINS = ["*"]
+    ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+    ALLOWED_HEADERS = [""]
+
 
 config = UserAppConfig()

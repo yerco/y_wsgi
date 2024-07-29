@@ -30,6 +30,9 @@ class Request:
             elif key in ('CONTENT_TYPE', 'CONTENT_LENGTH'):
                 # First letter of each work capitalized, e.g. 'content-type' becomes 'Content-Type'.
                 headers[key.replace('_', '-').title()] = value
+            else:
+                # Include other potential headers without modification
+                headers[key.replace('_', '-')] = value
 
         return headers
 

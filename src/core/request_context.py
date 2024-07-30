@@ -1,9 +1,10 @@
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import Any, Dict, Optional, Type, TYPE_CHECKING
 from urllib.parse import parse_qs
 
 from src.core.request import Request
 from src.core.session_context import SessionContext
 from src.core.app_context import AppContext
+from src.forms.fields import BaseForm
 
 if TYPE_CHECKING:
     from src.app import App
@@ -85,6 +86,9 @@ class RequestContext:
             elif 'multipart/form-data' in content_type:
                 return self.parse_multipart()
         return {}
+
+    def get_form(self, form_class: Type[BaseForm]):
+        return form_class(self.get_form_data())
 
     def parse_form_urlencoded(self) -> Dict[str, str]:
         return {k: v[0] for k, v in parse_qs(self.request.body.decode()).items()}

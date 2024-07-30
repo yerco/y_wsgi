@@ -2,12 +2,12 @@ import json
 
 from typing import List, Tuple
 
-from src.core.request import Request
 from src.core.request_context import RequestContext
 from src.core.response import Response
 from src.database.orm_interface import ORMInterface
 
 from user_app.modules.user_module.models.models import User
+from user_app.modules.user_module.forms.custom_user_form import CustomUserForm
 
 
 def register_routes(module, orm: ORMInterface):
@@ -25,7 +25,7 @@ def register_routes(module, orm: ORMInterface):
         return Response(status='200 OK', body=[rendered_template.encode('utf-8')])
 
     @module.route('/json')
-    def json_handler(request: Request) -> Response:
+    def json_handler(request_context: RequestContext) -> Response:
         data = {'message': 'Hello, JSON!'}
         status: str = '200 OK'
         headers: List[Tuple[str, str]] = [('Content-type', 'application/json')]
@@ -33,14 +33,14 @@ def register_routes(module, orm: ORMInterface):
 
     @module.route('/greet')
     @module.route('/greet/<name>')
-    def greet_handler(request: Request, name: str = "Guest") -> Response:
+    def greet_handler(request_context: RequestContext, name: str = "Guest") -> Response:
         data = {'message': f'Hello, {name}!'}
         status: str = '200 OK'
         headers: List[Tuple[str, str]] = [('Content-type', 'application/json')]
         return Response(status=status, headers=headers, body=[json.dumps(data).encode('utf-8')])
 
     @module.route('/users')
-    def list_users(request: Request) -> Response:
+    def list_users(request_context: RequestContext) -> Response:
         users = orm.all(User)
         users_data = [{'id': user.id, 'username': user.username} for user in users]
         return Response(
@@ -50,8 +50,8 @@ def register_routes(module, orm: ORMInterface):
         )
 
     @module.route('/create_user', methods=['POST'])
-    def create_user_view(request: Request) -> Response:
-        data = request.get_json()
+    def create_user_view(request_context: RequestContext) -> Response:
+        data = request_context.get_json()
 
         if not data or 'username' not in data or 'password' not in data:
             return Response(
@@ -70,7 +70,7 @@ def register_routes(module, orm: ORMInterface):
         )
 
     @module.route('/user/<int:id>')
-    def get_user(request: Request, id: int) -> Response:
+    def get_user(request_context: RequestContext, id: int) -> Response:
         id = int(id)  # Ensure id is an integer
         user = orm.get_by_id(User, id)
         if user:
@@ -88,7 +88,21 @@ def register_routes(module, orm: ORMInterface):
             )
 
     @module.route('/filter_users/<str:username>', methods=['GET'])
-    def filter_users(request: Request, username: str) -> Response:
+    def filter_users(request: RequestContext, username: str) -> Response:
         users = orm.filter(User, username=username)
         user_list = [user.__dict__ for user in users]
         return Response(status='200 OK', body=[json.dumps(user_list).encode('utf-8')])
+
+    @module.route('/register', methods=['GET', 'POST'])
+    def register_handler(request_context: RequestContext) -> Response:
+        if request_context.method == 'POST':
+            form = request_context.get_form(CustomUserForm)
+            if form.is_valid():
+                # Process valid form data
+                return Response(status='200 OK', body=[b'User registered successfully'])
+            else:
+                # Handle form errors
+                return form.get_response(status='400 Bad Request')
+        else:
+            form = CustomUserForm({})
+            return form.get_response(status='200 OK')

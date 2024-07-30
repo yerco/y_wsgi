@@ -16,8 +16,6 @@ class CORSMiddleware(Middleware):
 
     # Preflight request
     def before_request(self, request_context: RequestContext) -> Optional[Response]:
-        print(f"Incoming request: {request_context.method} {request_context.path}")
-        print(f"Headers: {request_context.headers}")
         origin = request_context.headers.get("Origin") or request_context.headers.get("origin", "")
         if origin and (origin in self.allowed_origins or "*" in self.allowed_origins):
             if request_context.method == "OPTIONS":
@@ -27,8 +25,6 @@ class CORSMiddleware(Middleware):
         return None
 
     def after_request(self, request_context: RequestContext, response: Response) -> Response:
-        print(f"Response: {response.status_code}")
-        print(f"Response Headers: {response.headers_dict}")
         self._set_cors_headers(request_context, response)
         return response
 

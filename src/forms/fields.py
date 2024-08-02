@@ -1,38 +1,39 @@
+from typing import List
+
+from src.forms.validation_strategy import ValidationStrategy, RequiredValidationStrategy, StringValidationStrategy, \
+    EmailValidationStrategy, IntegerValidationStrategy
+
+
 class Field:
     def __init__(self, label, required=False):
         self.label = label
         self.required = required
+        self.strategies: List[ValidationStrategy] = []
+        if self.required:
+            self.strategies.append(RequiredValidationStrategy())
+
+    def add_strategy(self, strategy: ValidationStrategy):
+        self.strategies.append(strategy)
 
     def validate(self, value):
-        if self.required and not value:
-            raise ValueError(f"{self.label} is required")
+        for strategy in self.strategies:
+            strategy.validate(value, self.label)
         return value
 
 
 class CharField(Field):
-    def validate(self, value):
-        value = super().validate(value)
-        if not isinstance(value, str):
-            raise ValueError(f"{self.label} must be a string")
-        return value
+    def __init__(self, label, required=False):
+        super().__init__(label, required)
+        self.add_strategy(StringValidationStrategy())
 
 
 class EmailField(CharField):
-    def validate(self, value):
-        value = super().validate(value)
-        if "@" not in value:
-            raise ValueError(f"{self.label} must be a valid email address")
-        return value
+    def __init__(self, label, required=False):
+        super().__init__(label, required)
+        self.add_strategy(EmailValidationStrategy())
 
 
 class IntegerField(Field):
-    def validate(self, value):
-        value = super().validate(value)
-
-        # Attempt to convert the value to an integer
-        try:
-            value = int(value)
-        except (ValueError, TypeError):
-            raise ValueError(f"{self.label} must be an integer")
-
-        return value
+    def __init__(self, label, required=False):
+        super().__init__(label, required)
+        self.add_strategy(IntegerValidationStrategy())

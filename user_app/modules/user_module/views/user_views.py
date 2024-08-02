@@ -102,7 +102,7 @@ def register_routes(module, orm: ORMInterface):
                 return Response(status='200 OK', body=[b'User registered successfully'])
             else:
                 # Handle form errors
-                return form.get_response(status='400 Bad Request')
+                return form.render_response(status='400 Bad Request')
         else:
-            form = CustomUserForm({})
-            return form.get_response(status='200 OK')
+            form = CustomUserForm("", request_context)
+            return form.render_response(status='200 OK')

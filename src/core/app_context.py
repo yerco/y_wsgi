@@ -2,6 +2,8 @@ import threading
 
 from typing import Any, Dict, Optional, TYPE_CHECKING
 
+from src.forms.form_mediator import FormMediator
+
 if TYPE_CHECKING:
     from src.app import App
 
@@ -10,6 +12,7 @@ class AppContext:
     _configs: Dict[str, Dict[str, Optional[str]]] = {}  # Global dictionary for storing app contexts
     _current_app_name = threading.local()  # Thread-local storage for current app
     _current_module_dir = threading.local()
+    _form_mediator: Optional[FormMediator] = None
 
     def set_context(self, app_name: str, base_dir: str, config: Dict[str, Optional[str]] = None,
                     app_instance: Optional[Any] = None):
@@ -59,3 +62,11 @@ class AppContext:
 
     def get_current_module_dir(self) -> Optional[str]:
         return getattr(self._current_module_dir, 'module_dir', None)
+
+    def set_form_mediator(self, form_mediator: FormMediator):
+        self._form_mediator = form_mediator
+
+    def get_form_mediator(self) -> Optional[FormMediator]:
+        if self._form_mediator is None:
+            self._form_mediator = FormMediator()  # Initialize it when accessed for the first time
+        return self._form_mediator

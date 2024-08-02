@@ -6,6 +6,7 @@ from src.session.session import Session
 class SessionContext:
     def __init__(self, session: Optional[Session] = None):
         self._session = session
+        self._csrf_token = None
 
     @property
     def id(self) -> Optional[str]:
@@ -18,6 +19,14 @@ class SessionContext:
     @session.setter
     def session(self, session: Session) -> None:
         self._session = session
+
+    @property
+    def csrf_token(self) -> str:
+        return self._csrf_token
+
+    @csrf_token.setter
+    def csrf_token(self, csrf_token: str) -> None:
+        self._csrf_token = csrf_token
 
     def is_valid(self) -> bool:
         return self._session is not None and not self._session.is_expired()

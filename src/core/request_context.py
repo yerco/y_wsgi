@@ -4,10 +4,10 @@ from urllib.parse import parse_qs
 from src.core.request import Request
 from src.core.session_context import SessionContext
 from src.core.app_context import AppContext
-from src.forms.fields import BaseForm
 
 if TYPE_CHECKING:
     from src.app import App
+    from src.forms.form import BaseForm
 
 
 class RequestContext:
@@ -17,6 +17,7 @@ class RequestContext:
         self._app_context = app_context
         self._user: Optional[Dict[str, Any]] = None
         self.current_module_dir: Optional[str] = None
+        self._form_data: Optional[Dict[str, str]] = None  # Cache for form data
 
     @property
     def method(self) -> str:
@@ -79,16 +80,31 @@ class RequestContext:
         self._user = user
 
     def get_form_data(self) -> Dict[str, str]:
-        if self.method in ("POST", "PUT", "PATCH", "DELETE"):
-            content_type = self.headers.get("Content-Type", "")
-            if 'application/x-www-form-urlencoded' in content_type:
-                return self.parse_form_urlencoded()
-            elif 'multipart/form-data' in content_type:
-                return self.parse_multipart()
-        return {}
+        if self._form_data is None:
+            if self.method in ("POST", "PUT", "PATCH", "DELETE"):
+                content_type = self.headers.get("Content-Type", "")
+                if 'application/x-www-form-urlencoded' in content_type:
+                    self._form_data = self.parse_form_urlencoded()
+                elif 'multipart/form-data' in content_type:
+                    self._form_data = self.parse_multipart()
+                else:
+                    self._form_data = {}
+        return self._form_data
 
-    def get_form(self, form_class: Type[BaseForm]):
-        return form_class(self.get_form_data())
+    @property
+    def form_data(self) -> Dict[str, str]:
+        return self.get_form_data()
+
+    def get_form(self, form_class: Type['BaseForm']):
+        form_data = self.get_form_data()
+        form = form_class(form_data, self)
+        return form
+
+    def get_csrf_token(self) -> str:
+        return self._session_context.csrf_token
+
+    def set_csrf_token(self, csrf_token: str) -> None:
+        self._session_context.csrf_token = csrf_token
 
     def parse_form_urlencoded(self) -> Dict[str, str]:
         return {k: v[0] for k, v in parse_qs(self.request.body.decode()).items()}

@@ -5,9 +5,11 @@ from typing import List, Tuple
 from src.core.request_context import RequestContext
 from src.core.response import Response
 from src.database.orm_interface import ORMInterface
+from user_app.modules.user_module.forms.admin_user_form import AdminUserForm
 
 from user_app.modules.user_module.models.models import User
 from user_app.modules.user_module.forms.custom_user_form import CustomUserForm
+from user_app.modules.user_module.forms.form_factory import FormFactory
 
 
 def register_routes(module, orm: ORMInterface):
@@ -94,9 +96,16 @@ def register_routes(module, orm: ORMInterface):
         return Response(status='200 OK', body=[json.dumps(user_list).encode('utf-8')])
 
     @module.route('/register', methods=['GET', 'POST'])
+    @module.route('/register/admin', methods=['GET', 'POST'])
     def register_handler(request_context: RequestContext) -> Response:
+        if request_context.path.endswith('/admin'):
+            form_type = 'admin'
+        else:
+            form_type = 'user'
+
+        form = FormFactory.create_form(form_type, request_context)
+
         if request_context.method == 'POST':
-            form = request_context.get_form(CustomUserForm)
             if form.is_valid():
                 # Process valid form data
                 return Response(status='200 OK', body=[b'User registered successfully'])
@@ -104,5 +113,4 @@ def register_routes(module, orm: ORMInterface):
                 # Handle form errors
                 return form.render_response(status='400 Bad Request')
         else:
-            form = CustomUserForm("", request_context)
             return form.render_response(status='200 OK')

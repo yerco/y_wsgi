@@ -11,7 +11,7 @@ class UserAppConfig:
 
     PUBLIC_ROUTES = ["/", "/greet", "/greet/[^/]+", "/about", "/users", "/create_user",
                      r"/user/\d+", "/filter_users/[^/]+", "/user_app_page", "/jinja2",
-                     "/register"]  # "/json" removed
+                     "/register", "/register/admin"]  # "/json" removed
 
     # Jinja2 configuration
     TEMPLATE_ENGINE = "jinja2"

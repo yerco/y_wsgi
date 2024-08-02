@@ -23,3 +23,16 @@ class EmailField(CharField):
         if "@" not in value:
             raise ValueError(f"{self.label} must be a valid email address")
         return value
+
+
+class IntegerField(Field):
+    def validate(self, value):
+        value = super().validate(value)
+
+        # Attempt to convert the value to an integer
+        try:
+            value = int(value)
+        except (ValueError, TypeError):
+            raise ValueError(f"{self.label} must be an integer")
+
+        return value

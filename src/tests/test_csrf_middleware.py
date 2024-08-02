@@ -1,10 +1,13 @@
 import pytest
+
+from unittest.mock import MagicMock
+
 from src.core.request_context import RequestContext
 from src.core.response import Response
 from src.core.request import Request
 from src.core.session_context import SessionContext
 from src.middleware.csrf_middleware import CSRFMiddleware
-from unittest.mock import MagicMock
+from src.middleware.csrf_token import CSRFToken
 
 
 @pytest.fixture
@@ -28,7 +31,7 @@ def app_context():
 
 @pytest.fixture
 def request_context(app_context, session_context):
-    environ = {'REQUEST_METHOD': 'POST'}  # Default to POST
+    environ = {'REQUEST_METHOD': 'GET'}
     request = Request(environ)
     request_context = RequestContext(request=request, app_context=app_context)
     request_context.session_context = session_context  # Set the session context directly
@@ -41,13 +44,15 @@ def response():
 
 
 def test_generate_csrf_token(csrf_middleware):
-    token = csrf_middleware.generate_csrf_token("session123")
+    csrf = CSRFToken("")
+    token = csrf.generate_csrf_token("session123")
     assert isinstance(token, str)
     assert token != ''
 
 
 def test_before_request_valid_token(csrf_middleware, request_context):
-    token = csrf_middleware.generate_csrf_token(request_context.session_context.id)
+    csrf = CSRFToken("")
+    token = csrf.generate_csrf_token(request_context.session_context.id)
     request_context.get_form_data = MagicMock(return_value={'csrf_token': token})
     response = csrf_middleware.before_request(request_context)
     assert response is None

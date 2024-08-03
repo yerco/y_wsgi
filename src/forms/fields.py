@@ -2,10 +2,12 @@ from typing import List
 
 from src.forms.validation_strategy import ValidationStrategy, RequiredValidationStrategy, StringValidationStrategy, \
     EmailValidationStrategy, IntegerValidationStrategy
+from src.forms.composite import FieldComponent
 
 
-class Field:
+class Field(FieldComponent):
     def __init__(self, label, required=False):
+        super().__init__()
         self.label = label
         self.required = required
         self.strategies: List[ValidationStrategy] = []
@@ -19,6 +21,9 @@ class Field:
         for strategy in self.strategies:
             strategy.validate(value, self.label)
         return value
+
+    def render(self):
+        return f"<label>{self.label}</label><input type='text' required={self.required}>"
 
 
 class CharField(Field):

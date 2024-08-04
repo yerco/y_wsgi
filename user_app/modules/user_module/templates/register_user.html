@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User App Page</title>
+    <style nonce="{{ nonce }}">
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1em;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 2em auto;
+            padding: 1em;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        p {
+            line-height: 1.6;
+        }
+        .logo {
+            display: block;
+            margin: 0 auto 2em;
+            width: 150px;
+        }
+        .footer {
+            text-align: center;
+            padding: 1em;
+            background-color: #333;
+            color: #fff;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to y_wsgi Framework</h1>
+</header>
+<div class="container">
+    <img src="../assets/images/y_wsgi.logo.png" alt="y_wsgi Logo" class="logo">
+    <h1>{{ template_vars.title }}</h1>
+    {{ form.render()| safe }}
+</div>
+<div class="footer">
+    <p>&copy; 2024 y_wsgi Framework. All lefts reserved.</p>
+</div>
+</body>
+</html>

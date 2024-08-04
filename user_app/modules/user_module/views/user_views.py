@@ -5,6 +5,8 @@ from typing import List, Tuple
 from src.core.request_context import RequestContext
 from src.core.response import Response
 from src.database.orm_interface import ORMInterface
+from src.http.http_response_builder import HTTPResponseBuilder
+from src.http.json_response_builder import JSONResponseBuilder
 
 from user_app.modules.user_module.models.models import User
 from user_app.modules.user_module.forms.form_factory import FormFactory
@@ -28,9 +30,11 @@ def register_routes(module, orm: ORMInterface):
     @module.route('/json')
     def json_handler(request_context: RequestContext) -> Response:
         data = {'message': 'Hello, JSON!'}
-        status: str = '200 OK'
-        headers: List[Tuple[str, str]] = [('Content-type', 'application/json')]
-        return Response(status=status, headers=headers, body=[json.dumps(data).encode('utf-8')])
+        json_response = (JSONResponseBuilder()
+                         .set_status('200')
+                         .set_body(data)
+                         .build())
+        return json_response
 
     @module.route('/greet')
     @module.route('/greet/<name>')
@@ -103,23 +107,38 @@ def register_routes(module, orm: ORMInterface):
             form_type = 'user'
 
         form = FormFactory.create_form(form_type, request_context)
+        response_builder = HTTPResponseBuilder()
 
         if request_context.method == 'POST':
             if form.is_valid():
                 # Process valid form data
-                return Response(status='200 OK', body=[b'User registered successfully'])
+                response = (response_builder
+                            .set_status('200 OK')
+                            .set_body('User registered successfully')
+                            .set_header('Content-Type', 'text/plain')
+                            .build())
             else:
                 # Handle form errors
-                return form.render_response(status='400 Bad Request')
+                response = form.render_response(status='400 Bad Request')
         else:
-            return form.render_response(status='200 OK')
+            response = form.render_response(status='200 OK')
+
+        return response
 
     @module.route('/register/user', methods=['GET', 'POST'])
     def register_user_handler(request_context: RequestContext) -> Response:
         action_url = '/register/user'  # Or dynamically determine this
 
+        template_vars = {
+            'title': 'This is a \"composite\" form',
+            'nonce': request_context.request.environ.get('nonce')
+        }
+
         csrf_token = request_context.get_csrf_token()
         composite_form = UserForm(action=action_url, include_submit_button=True, csrf_token=csrf_token)
+
+        current_app = request_context.current_app
+        response_builder = HTTPResponseBuilder()
 
         if request_context.method == 'POST':
             try:
@@ -127,7 +146,17 @@ def register_routes(module, orm: ORMInterface):
                 composite_form.validate(data)
                 composite_form.render()
             except ValueError as e:
-                return Response(status='400 Bad Request', body=[str(e).encode('utf-8')])
+                return (response_builder
+                        .set_status('400 Bad Request')
+                        .set_body(str(e).encode('utf-8'))
+                        .set_header('Content-Type', 'text/plain')
+                        .build())
         else:
-            return Response(status="200 OK", body=[composite_form.render().encode('utf-8')],
-                            headers=[('Content-Type', 'text/html')])
+            rendered_template = current_app.render_template(
+                'register_user.html', {'form': composite_form, 'template_vars': template_vars},
+            )
+            return (response_builder
+                    .set_status('200 OK')
+                    .set_body(rendered_template)
+                    .set_header('Content-Type', 'text/html')
+                    .build())

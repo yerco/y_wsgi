@@ -10,6 +10,15 @@ components of a web framework come together.
 Note: This project is by no means a project that has reached a minimal level of maturity. 
 It is a didactic work in progress, intended for learning and teaching purposes.
 
+## How This is Framework has been developed
+This framework was developed incrementally, focusing on implementing design patterns as they emerged naturally
+during the problem-solving process. The idea was to build a minimal but functional web framework while providing
+a hands-on learning experience in applying design patterns.
+
+Each design decision was made to demonstrate a specific pattern, ensuring that the framework remains simple yet
+educational. While the framework is not intended for production use, it could serve as a valuable tool for 
+understanding the architecture and design principles behind more complex frameworks like Django and Flask.
+
 ## Tools of the trade
 - Python 3.11.8
 

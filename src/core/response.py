@@ -56,6 +56,8 @@ class Response:
             yield self.body
         else:
             for chunk in self.body:
+                if not isinstance(chunk, bytes):
+                    raise TypeError('%r is not a byte' % chunk)
                 yield chunk
 
     @property

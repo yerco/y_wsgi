@@ -18,6 +18,7 @@ class RequestContext:
         self._user: Optional[Dict[str, Any]] = None
         self.current_module_dir: Optional[str] = None
         self._form_data: Optional[Dict[str, str]] = None  # Cache for form data
+        self.signal_manager = None
 
     @property
     def method(self) -> str:

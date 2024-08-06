@@ -67,3 +67,18 @@ class UserRepository:
         return self.orm.all('user')
 ```
 
+## Example of usage at main.py
+```python
+# Example usage
+user_repo = UserRepository(orm)
+user_repo.add(User(username='johnny_marx', password='123password'))
+
+# Create a user using the factory and add it via the repository
+user = orm.create(User, username='john_doe', password='password123')
+print(user)
+user = orm.create(User, username='jane_doe', password='password123')
+print(user)
+
+users = orm.all(User)
+print("All of them:\n", users)
+```

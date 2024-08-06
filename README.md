@@ -15,9 +15,11 @@ This framework was developed incrementally, focusing on implementing design patt
 during the problem-solving process. The idea was to build a minimal but functional web framework while providing
 a hands-on learning experience in applying design patterns.
 
-Each design decision was made to demonstrate a specific pattern, ensuring that the framework remains simple yet
-educational. While the framework is not intended for production use, it could serve as a valuable tool for 
-understanding the architecture and design principles behind more complex frameworks like Django and Flask.
+Key Points:
+- The framework is intentionally minimalistic, focusing on educational value rather than production-readiness.
+- Decisions were made on the spot, leading to some architectural choices that may not be optimal. 
+  The goal is to learn and teach, so these decisions are part of the learning process.
+- The framework has not been extensively tested, and there may be flaws or areas for improvement.
 
 ## Tools of the trade
 - Python 3.11.8
@@ -29,6 +31,18 @@ understanding the architecture and design principles behind more complex framewo
 - Basic authentication and authorization
 - Middleware support
 - Routing with support for public and protected routes
+- Integration of signals (observer)
+
+## Some Design Patterns Implemented
+- Factories
+- Strategy
+- Composite
+- Observer
+- Template
+- Builder
+- Register
+- Memento
+- etc.
 
 ## Getting started
 
@@ -183,3 +197,20 @@ your_app/
             └── template3.html
 ```
 
+#### Signals and Middleware
+To showcase the Observer pattern, a custom `SignalManager` was implemented, allowing different parts of
+the framework to react to events such as `request_started` and `request_finished`. This feature is demonstrated
+through the `ResponseTimeMiddleware`, which tracks the response time of each request and appends it to 
+the response headers.
+
+### Demo and Example Pages
+To help you get started and see the framework in action, a pseudo demonstration is available under 
+the `user_app` module. Once you’ve set up and run the web server, you can visit example pages
+such as http://localhost:8000/user_app_page to explore the features and functionality of the framework.
+
+## Feedback and Contributions
+
+Criticism, doubts, and comments are welcome! Your feedback is invaluable in improving and refining this framework. 
+If you’d like to share your thoughts, report issues, or contribute to the project, feel free to reach out 
+through GitHub.
+You can contact me by opening an issue or starting a discussion here on GitHub. I’m looking forward to hearing from you!

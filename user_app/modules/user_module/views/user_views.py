@@ -101,6 +101,9 @@ def register_routes(module, orm: ORMInterface):
     @module.route('/register', methods=['GET', 'POST'])
     @module.route('/register/admin', methods=['GET', 'POST'])
     def register_handler(request_context: RequestContext) -> Response:
+        if request_context.signal_manager:
+            request_context.signal_manager.emit('request_started', request_context=request_context)
+
         if request_context.path.endswith('/admin'):
             form_type = 'admin'
         else:
@@ -123,6 +126,8 @@ def register_routes(module, orm: ORMInterface):
         else:
             response = form.render_response(status='200 OK')
 
+        if request_context.signal_manager:
+            request_context.signal_manager.emit('request_finished', request_context=request_context, response=response)
         return response
 
     @module.route('/register/user', methods=['GET', 'POST'])

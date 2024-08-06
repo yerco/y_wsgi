@@ -48,31 +48,28 @@ Key Points:
 
 ### Installation
 1. Clone the repository:
-    ```bash
     $ git clone https://github.com/your-repo/y-wsgi.git
     $ cd y-wsgit
-    ```
   
 2. Install the required packages
-    ```bash
     $ pip install -r requirements.txt
-    ```
 
 ### Running the server
 You can run the server using, for example, either Gunicorn or uWSGI.
 
 ####  Using gunicorn
-    ```bash
     $ gunicorn wsgi:application [--reload] [--access-logfile -]
-    ```
 
 #### Using uWSGI
-    ```bash
     $ uwsgi --http :8000 --wsgi-file wsgi.py --callable application [--py-autoreload=1]
-    ```
 
 ### Accessing the server
 Once the server is running, you can access it in your web browser at: http://127.0.0.1:8000
+
+### Demo and Example Pages
+To help you get started and see the framework in action, a pseudo demonstration is available under 
+the `user_app` module. Once you’ve set up and run the web server, you can visit example pages
+such as http://localhost:8000/user_app_page to explore the features and functionality of the framework.
 
 ## Usage
 
@@ -202,11 +199,6 @@ To showcase the Observer pattern, a custom `SignalManager` was implemented, allo
 the framework to react to events such as `request_started` and `request_finished`. This feature is demonstrated
 through the `ResponseTimeMiddleware`, which tracks the response time of each request and appends it to 
 the response headers.
-
-### Demo and Example Pages
-To help you get started and see the framework in action, a pseudo demonstration is available under 
-the `user_app` module. Once you’ve set up and run the web server, you can visit example pages
-such as http://localhost:8000/user_app_page to explore the features and functionality of the framework.
 
 ## Feedback and Contributions
 

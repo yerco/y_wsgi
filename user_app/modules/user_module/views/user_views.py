@@ -7,10 +7,20 @@ from src.core.response import Response
 from src.database.orm_interface import ORMInterface
 from src.http.http_response_builder import HTTPResponseBuilder
 from src.http.json_response_builder import JSONResponseBuilder
+from src.background_worker import BackgroundWorker
 
 from user_app.modules.user_module.models.models import User
 from user_app.modules.user_module.forms.form_factory import FormFactory
 from user_app.modules.user_module.forms.composite_form import UserForm
+
+background_worker = BackgroundWorker()
+
+
+def heavy_task(data):
+    # Simulate a long-running task
+    import time
+    time.sleep(10)
+    print(f"Task completed with data: {data}")
 
 
 def register_routes(module, orm: ORMInterface):
@@ -165,3 +175,19 @@ def register_routes(module, orm: ORMInterface):
                     .set_body(rendered_template)
                     .set_header('Content-Type', 'text/html')
                     .build())
+
+    @module.route('/start_background_task', methods=['GET'])
+    def start_task_handler(request_context: RequestContext) -> Response:
+        # Start a background task
+        background_worker.add_task(heavy_task, data="Important data")
+        response_body = "Background task started"
+        response_builder = HTTPResponseBuilder()
+        return response_builder.set_status('200 OK').set_body(response_body.encode('utf-8')).build()
+
+    @module.route('/wait_for_tasks', methods=['GET'])
+    def wait_for_tasks_handler(request_context: RequestContext) -> Response:
+        # Wait for all background tasks to complete
+        background_worker.wait_for_completion()
+        response_body = "All background tasks completed"
+        response_builder = HTTPResponseBuilder()
+        return response_builder.set_status('200 OK').set_body(response_body.encode('utf-8')).build()

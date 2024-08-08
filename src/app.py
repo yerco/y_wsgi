@@ -1,3 +1,4 @@
+import importlib
 import os
 
 from typing import Callable, Dict, Any, List, Tuple, Iterable, Type, Union, Optional
@@ -56,13 +57,17 @@ class App:
     def add_module(self, module_name: str, module: Any) -> None:
         self.modules[module_name] = module
 
+    def get_module_path(self, handler):
+        module_name = handler.__module__
+        module = importlib.import_module(module_name)
+        return module.__file__
+
     # decorator
     def route(self, path: str, methods: List[str] = None) -> Callable[[HandlerType], HandlerType]:
         def wrapper(handler: HandlerType) -> HandlerType:
-            if isinstance(handler, type):
-                module_views_dir = os.path.dirname(os.path.abspath(handler.__init__.__code__.co_filename))
-            else:
-                module_views_dir = os.path.dirname(os.path.abspath(handler.__code__.co_filename))
+            # Determine module directory using the handler's __module__ attribute
+            module_file_path = self.get_module_path(handler)
+            module_views_dir = os.path.dirname(module_file_path)
             module_dir = os.path.dirname(module_views_dir)
 
             def wrapped_handler(request_context: RequestContext, *args, **kwargs):

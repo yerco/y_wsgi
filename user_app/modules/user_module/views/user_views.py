@@ -8,6 +8,7 @@ from src.database.orm_interface import ORMInterface
 from src.http.http_response_builder import HTTPResponseBuilder
 from src.http.json_response_builder import JSONResponseBuilder
 from src.background_worker import BackgroundWorker
+from src.cache.cache_decorator import cache_view
 
 from user_app.modules.user_module.models.models import User
 from user_app.modules.user_module.forms.form_factory import FormFactory
@@ -25,6 +26,7 @@ def heavy_task(data):
 
 def register_routes(module, orm: ORMInterface):
     @module.route('/user_app_page', methods=['GET'])
+    @cache_view(timeout=300)  # Cache this view for 5 minutes
     def user_app_page(request_context: RequestContext):
         template_vars = {
             'title': 'This is the user_app',

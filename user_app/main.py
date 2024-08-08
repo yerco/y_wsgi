@@ -11,7 +11,7 @@ from src.signals.signal_manager import SignalManager
 from src.middleware.response_time_middleware import ResponseTimeMiddleware
 
 from user_app.modules.user_module.hooks import some_hooks
-from user_app.modules.user_module.views import hello_views, user_views
+from user_app.modules.user_module.views import hello_views, user_views, another_view
 from user_app.modules.user_module.models.models import User
 from user_app.config import config
 
@@ -52,3 +52,4 @@ user_mod.use_middleware(AuthenticationMiddleware, public_routes=config.PUBLIC_RO
 # Register routes
 user_mod.register_routes(user_views.register_routes, orm)
 user_mod.register_routes(hello_views.register_routes)
+user_mod.register_routes(another_view.register_routes)

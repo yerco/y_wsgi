@@ -51,3 +51,12 @@ class View:
 
     def trace(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
         return self.http_method_not_allowed(request_context, params)
+
+    @classmethod
+    def as_view(cls, *class_args, **class_kwargs):
+        def view(request_context: RequestContext, **params: Any) -> Response:
+            # Create an instance of the class with the provided arguments
+            self = cls(*class_args, **class_kwargs)
+            # Execute the view instance
+            return self(request_context, **params)
+        return view

@@ -12,7 +12,7 @@ class UserAppConfig:
     PUBLIC_ROUTES = ["/", "/greet", "/greet/[^/]+", "/about", "/users", "/create_user",
                      r"/user/\d+", "/filter_users/[^/]+", "/user_app_page", "/jinja2",
                      "/register", "/register/admin", "/register/user", "/json", "/start_background_task",
-                     "/wait_for_tasks"]
+                     "/wait_for_tasks", "/another", "/example-as-view"]
 
     # Jinja2 configuration
     TEMPLATE_ENGINE = "jinja2"

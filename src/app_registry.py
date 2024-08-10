@@ -39,7 +39,11 @@ class AppRegistry:
         if app.name not in self._apps:
             raise ValueError(f'App {app.name} does not exist')
         base_dir = self._get_app_base_dir(app.name)
-        module_dir = os.path.join(base_dir, module_name)
+        module_dir = os.path.join(base_dir, 'modules', module_name)
+
+        if not os.path.isdir(module_dir):
+            raise ValueError(f"Module directory {module_dir} does not exist")
+
         module = Module(module_name, app, module_dir)
         app.add_module(module_name, module)
         return module

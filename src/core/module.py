@@ -4,6 +4,8 @@ from src.app import App
 from src.database.orm_interface import ORMInterface
 from src.middleware.middleware import Middleware
 from src.hooks.hooks import Hooks
+from src.plugins.base_plugin import BasePlugin
+from src.plugins.plugin_loader import initialize_module_plugins
 
 
 class Module:
@@ -13,6 +15,17 @@ class Module:
         self.middlewares: List[Middleware] = []
         self.hooks = Hooks()
         self.directory = directory
+        self.plugins: List[BasePlugin] = []
+        # Initialize plugins for this module
+        self._initialize_plugins()
+
+    def _initialize_plugins(self):
+        # Use the plugin loader to discover and initialize plugins
+        initialize_module_plugins(self, self.app)
+
+    def register_plugin(self, plugin: BasePlugin):
+        self.plugins.append(plugin)
+        plugin.register(self.app)
 
     def use_middleware(self, middleware_cls: Type[Middleware], *args: Any, **kwargs: Any) -> None:
         middleware_instance = middleware_cls(*args, **kwargs)

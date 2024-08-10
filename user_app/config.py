@@ -12,7 +12,7 @@ class UserAppConfig:
     PUBLIC_ROUTES = ["/", "/greet", "/greet/[^/]+", "/about", "/users", "/create_user",
                      r"/user/\d+", "/filter_users/[^/]+", "/user_app_page", "/jinja2",
                      "/register", "/register/admin", "/register/user", "/json", "/start_background_task",
-                     "/wait_for_tasks", "/another", "/example-as-view"]
+                     "/wait_for_tasks", "/another", "/example-as-view", "/proxy-example"]
 
     # Jinja2 configuration
     TEMPLATE_ENGINE = "jinja2"
@@ -20,6 +20,11 @@ class UserAppConfig:
     ALLOWED_ORIGINS = ["*"]
     ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     ALLOWED_HEADERS = [""]
+
+    # Default users for testing
+    DEFAULT_USERS = [
+        {"username": "john", "password": "password", "role": "user"}
+    ]
 
 
 config = UserAppConfig()

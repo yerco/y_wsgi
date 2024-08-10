@@ -5,17 +5,23 @@ from src.core.session_context import SessionContext
 from src.core.response import Response
 from src.middleware.middleware import Middleware
 from src.middleware.csrf_token import CSRFToken
+from src.config_loader import load_config
 
 
 class CSRFMiddleware(Middleware):
-    def __init__(self, secret_key: str, *args, **kwargs):
+    def __init__(self, config, *args, **kwargs):
         super().__init__(self, *args, **kwargs)
+        self.config = config if config else load_config()
+        secret_key = config.SECRET_KEY
         self.csrf_token = CSRFToken(secret_key)
 
     def before_request(self, request_context: RequestContext) -> Optional[Response]:
         session_context: SessionContext = request_context.session_context
-        if not session_context.csrf_token:
-            session_context.csrf_token = self.csrf_token.generate_csrf_token(session_context.id)
+        if not hasattr(session_context, 'csrf_token'):
+            if hasattr(session_context, 'id'):
+                session_context.csrf_token = self.csrf_token.generate_csrf_token(session_context.id)
+            else:
+                return Response(b"Session not initialized", status="500 Internal Server Error")
 
         if request_context.request.headers.get('Content-Type') == 'application/json':
             return None

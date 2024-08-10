@@ -10,3 +10,10 @@ class HelloWorldHandler(View):
         status: str = '200 OK'
         headers: List[Tuple[str, str]] = [('Content-type', 'text/plain')]
         return Response(status=status, headers=headers, body=[b'Hello', b' ', b'YWSGI', b' ', b'World!'])
+
+
+class ProxyExampleHandler(View):
+    def get(self, request_context: RequestContext, params: Dict[str, Any] = None) -> Response:
+        status: str = '200 OK'
+        headers: List[Tuple[str, str]] = [('Content-type', 'text/plain')]
+        return Response(status=status, headers=headers, body=[b'Proxy', b' ', b'Example', b' ', b'Handler'])

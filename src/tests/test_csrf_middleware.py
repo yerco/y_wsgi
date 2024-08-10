@@ -10,10 +10,14 @@ from src.middleware.csrf_middleware import CSRFMiddleware
 from src.middleware.csrf_token import CSRFToken
 
 
+class Config:
+    SECRET_KEY = "test-secret-key"
+
+
 @pytest.fixture
 def csrf_middleware():
     secret_key = "test-secret-key"
-    return CSRFMiddleware(secret_key=secret_key)
+    return CSRFMiddleware(Config())
 
 
 @pytest.fixture

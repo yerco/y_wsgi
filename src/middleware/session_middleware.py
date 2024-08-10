@@ -8,13 +8,14 @@ from src.config_loader import load_config
 from src.core.request_context import RequestContext
 from src.core.session_context import SessionContext
 from src.core.app_context import AppContext
+from src.utils.merge_configs import BaseConfig, merge_configs
 
 
 class SessionMiddleware(Middleware):
-    def __init__(self):
+    def __init__(self, config=None):
         super().__init__()
         self.session_store = SessionStore()
-        self.config = load_config()
+        self.config = merge_configs(config if config else BaseConfig(), load_config())
 
     def before_request(self, request_context: RequestContext) -> None:
         app_context: AppContext = request_context.app_context  # Ensure app context is loaded
@@ -52,5 +53,5 @@ class SessionMiddleware(Middleware):
         request_context.request.session_id_to_set = cookie
 
     def _should_regenerate_id(self, session_context: SessionContext) -> bool:
-        rotation_interval = self.config.get('SESSION_ID_ROTATION_INTERVAL', 1800)
+        rotation_interval = self.config.SESSION_ID_ROTATION_INTERVAL if self.config.SESSION_ID_ROTATION_INTERVAL else 1800
         return (time.time() - session_context.created_at) > rotation_interval

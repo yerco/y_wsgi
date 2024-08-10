@@ -1,17 +1,21 @@
-from typing import List, Optional
+from typing import Optional
 
 from src.core.request_context import RequestContext
 from src.core.response import Response
 from src.middleware.middleware import Middleware
+from src.config_loader import load_config
+from src.utils.merge_configs import BaseConfig, merge_configs
 
 
 class CORSMiddleware(Middleware):
-    def __init__(self, allowed_origins: Optional[list[str]] = None, allowed_methods: Optional[list[str]] = None,
-                 allowed_headers: Optional[list[str]] = None, max_age: int = 3600):
+    def __init__(self, config=None, max_age: int = 3600):
         super().__init__()
-        self.allowed_origins = allowed_origins if allowed_origins else ["*"]
-        self.allowed_methods = allowed_methods if allowed_methods else ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
-        self.allowed_headers = allowed_headers if allowed_headers else ["Content-Type", "Authorization"]  # customizable
+        self.config = merge_configs(config if config else BaseConfig(), load_config())
+        self.allowed_origins = self.config.ALLOWED_ORIGINS if self.config.ALLOWED_ORIGINS else ["*"]
+        self.allowed_methods = self.config.ALLOWED_METHODS if self.config.ALLOWED_METHODS else ["GET", "POST", "PUT",
+                                                                                                "DELETE", "OPTIONS"]
+        self.allowed_headers = self.config.ALLOWED_HEADERS if self.config.ALLOWED_HEADERS else ["Content-Type",
+                                                                                                "Authorization"]
         self.max_age = max_age
 
     # Preflight request

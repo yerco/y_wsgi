@@ -4,7 +4,6 @@ import os
 import sys
 
 from src.app_registry import AppRegistry
-from src.core.app_context import AppContext
 from src.database.orm_initializer import initialize_orm
 from src.middleware.session_middleware import SessionMiddleware
 from src.tests.test_client import FrameworkTestClient

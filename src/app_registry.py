@@ -20,7 +20,7 @@ class AppRegistry:
             base_dir = self._get_app_base_dir(name)
             # print("Checking base dir:", base_dir)
             config = load_config(name, base_dir)
-            app = App(name, config['TEMPLATE_ENGINE'] if 'TEMPLATE_ENGINE' in config else None)
+            app = App(name, config.TEMPLATE_ENGINE if config.TEMPLATE_ENGINE else None)
             # print("Loaded config:", config)
             app_context = AppContext()
             app_context.set_context(name, base_dir, config, app)

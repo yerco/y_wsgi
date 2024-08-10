@@ -3,9 +3,6 @@ import pytest
 import sys
 
 from src.app import App
-from src.core.module import Module
-from src.core.app_context import AppContext
-from src.config_loader import load_config
 from src.app_registry import AppRegistry
 
 
@@ -64,14 +61,14 @@ def test_create_module(app_registry, monkeypatch):
     dummy_app = app_registry.get_app('dummy_app')
     dummy_app_context = dummy_app.get_context()
     dummy_app_config = dummy_app_context.get_config()
-    assert dummy_app_config['SECRET_KEY'] == 'dummy-app-secret-key'
+    assert dummy_app_config.SECRET_KEY == 'dummy-app-secret-key'
 
     another_dummy_app = app_registry.get_app('another_dummy_app')
     another_dummy_app_context = another_dummy_app.get_context()
     another_dummy_app_config = another_dummy_app_context.get_config()
-    assert another_dummy_app_config['SECRET_KEY'] == 'another-dummy-app-secret-key'
+    assert another_dummy_app_config.SECRET_KEY == 'another-dummy-app-secret-key'
 
     dummy_app2 = app_registry.get_app('dummy_app')
     dummy_app_context2 = dummy_app2.get_context()
     dummy_app_config2 = dummy_app_context2.get_config()
-    assert dummy_app_config2['SECRET_KEY'] == 'dummy-app-secret-key'
+    assert dummy_app_config2.SECRET_KEY == 'dummy-app-secret-key'

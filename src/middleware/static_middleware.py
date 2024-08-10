@@ -18,7 +18,7 @@ class StaticMiddleware(Middleware):
         if path_info.startswith('assets/'):
             app_context = request_context.current_app.context
             app_config = app_context.get_config(request_context.current_app.name)
-            base_dir = app_config.get('BASE_DIR', '.')
+            base_dir = app_config.BASE_DIR
             target_asset = f"{base_dir}/{path_info}"
             if os.path.exists(target_asset):
                 with open(target_asset, 'rb') as f:

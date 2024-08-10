@@ -12,10 +12,8 @@ def test_default_config():
 
 def test_load_default_config():
     config = load_config()
-    assert 'DEBUG' in config
-    assert 'SECRET_KEY' in config
-    assert config['DEBUG'] is False
-    assert config['SECRET_KEY'] == 'secret-key'
+    assert config.DEBUG is False
+    assert config.SECRET_KEY == 'secret-key'
 
 
 def test_load_app_specific_config():
@@ -30,12 +28,10 @@ def test_load_app_specific_config():
     # Remove the base directory from sys.path after the test to avoid side effects
     sys.path.pop(0)
 
-    assert 'DEBUG' in config
-    assert 'SECRET_KEY' in config
-    assert config['DEBUG'] is False
-    assert config['SECRET_KEY'] == 'dummy-app-secret-key'
-    assert config['APP_NAME'] == app_name
-    assert config['BASE_DIR'] == base_dir
+    assert config.DEBUG is False
+    assert config.SECRET_KEY == 'dummy-app-secret-key'
+    assert config.APP_NAME == app_name
+    assert config.BASE_DIR == base_dir
 
 
 def test_load_another_app_specific_config():
@@ -50,11 +46,9 @@ def test_load_another_app_specific_config():
     # Remove the base directory from sys.path after the test to avoid side effects
     sys.path.pop(0)
 
-    assert 'DEBUG' in config
-    assert 'SECRET_KEY' in config
-    assert config['SECRET_KEY'] == 'another-dummy-app-secret-key'
-    assert config['APP_NAME'] == app_name
-    assert config['BASE_DIR'] == base_dir
+    assert config.SECRET_KEY == 'another-dummy-app-secret-key'
+    assert config.APP_NAME == app_name
+    assert config.BASE_DIR == base_dir
 
 
 def test_multiple_app_configs():
@@ -74,16 +68,12 @@ def test_multiple_app_configs():
 
     # Assertions for dummy_app
     dummy_app_config = configs['dummy_app']
-    assert 'DEBUG' in dummy_app_config
-    assert 'SECRET_KEY' in dummy_app_config
-    assert dummy_app_config['SECRET_KEY'] == 'dummy-app-secret-key'
-    assert dummy_app_config['APP_NAME'] == 'dummy_app'
-    assert dummy_app_config['BASE_DIR'] == base_dir
+    assert dummy_app_config.SECRET_KEY == 'dummy-app-secret-key'
+    assert dummy_app_config.APP_NAME == 'dummy_app'
+    assert dummy_app_config.BASE_DIR == base_dir
 
     # Assertions for another_dummy_app
     another_dummy_app_config = configs['another_dummy_app']
-    assert 'DEBUG' in another_dummy_app_config
-    assert 'SECRET_KEY' in another_dummy_app_config
-    assert another_dummy_app_config['SECRET_KEY'] == 'another-dummy-app-secret-key'
-    assert another_dummy_app_config['APP_NAME'] == 'another_dummy_app'
-    assert another_dummy_app_config['BASE_DIR'] == base_dir
+    assert another_dummy_app_config.SECRET_KEY == 'another-dummy-app-secret-key'
+    assert another_dummy_app_config.APP_NAME == 'another_dummy_app'
+    assert another_dummy_app_config.BASE_DIR == base_dir

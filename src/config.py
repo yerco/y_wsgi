@@ -24,5 +24,7 @@ class Config:
     ALLOWED_METHODS = ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
     ALLOWED_HEADERS = ["Content-Type", "Authorization"]
 
+    TEMPLATE_ENGINE = "jinja2"
+
 
 config = Config()

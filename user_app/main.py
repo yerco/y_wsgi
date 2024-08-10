@@ -30,17 +30,16 @@ orm = initialize_orm([User])
 user_mod = app_registry.create_module('user_module', app)
 
 # Register user module middlewares, order matters!
-user_mod.use_middleware(ResponseTimeMiddleware, signal_manager)
-user_mod.use_middleware(CORSMiddleware, allowed_origins=config.ALLOWED_ORIGINS, allowed_methods=config.ALLOWED_METHODS,
-                        allowed_headers=config.ALLOWED_HEADERS)
-# user_mod.use_middleware(XSSProtectionMiddleware)
+user_mod.use_middleware(ResponseTimeMiddleware, signal_manager)  # TODO change second argument must be signal_manager
+user_mod.use_middleware(CORSMiddleware, config)
+user_mod.use_middleware(XSSProtectionMiddleware)
 user_mod.use_middleware(StaticMiddleware)
 # Apply SessionMiddleware
-user_mod.use_middleware(SessionMiddleware)
-# Apply CSRFMiddleware after SessionMiddleware and before AuthenticationMiddleware
-user_mod.use_middleware(CSRFMiddleware, secret_key=config.SECRET_KEY)
+user_mod.use_middleware(SessionMiddleware, config)
+# Apply CSRFMiddleware (it works together with SessionMiddleware)
+user_mod.use_middleware(CSRFMiddleware, config)
 # Apply AuthenticationMiddleware after SessionMiddleware
-user_mod.use_middleware(AuthenticationMiddleware, public_routes=config.PUBLIC_ROUTES)
+user_mod.use_middleware(AuthenticationMiddleware, config)
 
 
 # # Register user module hooks

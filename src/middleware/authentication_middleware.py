@@ -7,17 +7,20 @@ from src.core.request import Request
 from src.core.response import Response
 from src.middleware.middleware import Middleware
 from src.config_loader import load_config
+from src.utils.merge_configs import BaseConfig, merge_configs
 
 
 class AuthenticationMiddleware(Middleware):
 
-    def __init__(self, public_routes: List[str]):
+    def __init__(self, config):
         super().__init__()
         self.auth_context = AuthContext()
-        self.public_routes = public_routes
-        self.config = load_config()
-        self.MAX_FAILED_ATTEMPTS = self.config['MAX_FAILED_ATTEMPTS']
-        self.default_users = {user["username"]: user for user in self.config['DEFAULT_USERS']}
+        # Use merge_configs to merge the provided config with the default config
+        self.config = merge_configs(config if config else BaseConfig(), load_config())
+        self.public_routes = self.config.PUBLIC_ROUTES if hasattr(self.config, "PUBLIC_ROUTES") else []
+        self.MAX_FAILED_ATTEMPTS = self.config.MAX_FAILED_ATTEMPTS if hasattr(self.config, "MAX_FAILED_ATTEMPTS") else 3
+        default_users = self.config.DEFAULT_USERS if hasattr(self.config, "DEFAULT_USERS") else []
+        self.default_users = {user["username"]: user for user in default_users}
 
     def before_request(self, request: Request):
         for public_route in self.public_routes:

@@ -19,4 +19,5 @@ def test_request_context():
     assert request_context.method == 'GET'
     assert request_context.path == '/'
     assert request_context.query_string == ''
-    assert request_context.headers['Content-Type'] == 'application/json'
+    # We are lowercasing the headers
+    assert request_context.headers['content-type'] == 'application/json'

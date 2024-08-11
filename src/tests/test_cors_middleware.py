@@ -1,3 +1,4 @@
+import os
 import pytest
 
 from src.middleware.cors_middleware import CORSMiddleware
@@ -24,13 +25,19 @@ def app_registry():
 
 
 @pytest.fixture
-def app(app_registry):
-    return app_registry.create_app('test_app')
+def app(app_registry, monkeypatch):
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    apps_dir = os.path.join(current_dir, 'apps')
+
+    def mock_get_app_base_dir(self, name):
+        return str(apps_dir) + '/' + 'dummy_app'
+    monkeypatch.setattr(AppRegistry, '_get_app_base_dir', mock_get_app_base_dir)
+    return app_registry.create_app('dummy_app')
 
 
 @pytest.fixture
 def app_module(app_registry, app):
-    return app_registry.create_module('app_module', app)
+    return app_registry.create_module('module1', app)
 
 
 @pytest.fixture
@@ -43,7 +50,7 @@ def request_context(app):
     return RequestContext(request, app.get_context())
 
 
-def test_cors_middleware_before_request(app_module, request_context):
+def test_cors_middleware_before_request(app_module, request_context, monkeypatch):
     config = Config()
     cors_middleware = CORSMiddleware(config)
     response = cors_middleware.before_request(request_context)

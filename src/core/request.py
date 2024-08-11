@@ -29,10 +29,10 @@ class Request:
                 headers[key[5:].replace('_', '-').lower()] = value
             elif key in ('CONTENT_TYPE', 'CONTENT_LENGTH'):
                 # First letter of each work capitalized, e.g. 'content-type' becomes 'Content-Type'.
-                headers[key.replace('_', '-').title()] = value
+                headers[key.replace('_', '-').lower()] = value
             else:
                 # Include other potential headers without modification
-                headers[key.replace('_', '-')] = value
+                headers[key.replace('_', '-').lower()] = value
 
         return headers
 
@@ -107,7 +107,7 @@ class Request:
 
     def get_json(self) -> Optional[Union[Dict[str, Any], list]]:
         import json
-        if 'application/json' in self.headers.get('Content-Type', ''):
+        if 'application/json' in self.headers.get('content-type', ''):
             return json.loads(self.body)
         return None
 

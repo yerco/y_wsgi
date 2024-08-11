@@ -47,6 +47,11 @@ def test_create_module(app_registry, monkeypatch):
     app_name2 = 'another_dummy_app'
     app2 = app_registry.create_app(app_name2)
 
+    # maybe a bit flaky
+    def mock_get_app_base_dir(self, name):
+        return str(apps_dir) + '/' + 'dummy_app'
+    monkeypatch.setattr(AppRegistry, '_get_app_base_dir', mock_get_app_base_dir)
+
     app_registry.create_module('module1', app1)
     app_registry.create_module('module2', app1)
     app_registry.create_module('module3', app1)

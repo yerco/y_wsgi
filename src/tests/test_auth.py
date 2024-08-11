@@ -1,7 +1,9 @@
 import pytest
+import os
+
+from unittest.mock import patch
 
 from src.app_registry import AppRegistry
-from src.config_loader import load_config
 from src.database.orm_initializer import initialize_orm
 from src.middleware.authentication_middleware import AuthenticationMiddleware
 from src.tests.test_client import FrameworkTestClient
@@ -21,17 +23,22 @@ class Config:
 def app():
     # Create and instance of AppRegistry
     app_registry = AppRegistry()
-    # Create an application instance
-    app = app_registry.create_app('test_app')
-    # Initialize the ORM adapter
-    orm = initialize_orm([ModelForTesting])
-    # Create a test module
-    test_mod = app_registry.create_module('test_module', app)
-    # Register authentication middleware with public routes
-    config = Config()
-    test_mod.use_middleware(AuthenticationMiddleware, config)
+    current_file_dir = os.path.dirname(os.path.abspath(__file__))
+    test_directory = os.path.join(current_file_dir, 'apps/dummy_app')
+    # Mock the _get_app_base_dir method
+    with patch.object(AppRegistry, '_get_app_base_dir', return_value=test_directory):
+        # Create an application instance
+        app = app_registry.create_app('dummy_app')
 
-    test_mod.register_routes(register_routes, orm)
+        # Initialize the ORM adapter
+        orm = initialize_orm([ModelForTesting])  # Replace with your actual models for testing
+        # Create a test module
+        test_mod = app_registry.create_module('module1', app)
+        # Register authentication middleware with public routes
+        config = Config()
+        test_mod.use_middleware(AuthenticationMiddleware, config)
+
+        test_mod.register_routes(register_routes, orm)
 
     return app
 

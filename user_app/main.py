@@ -37,7 +37,7 @@ user_mod.use_middleware(StaticMiddleware)
 # Apply SessionMiddleware
 user_mod.use_middleware(SessionMiddleware, config)
 # Apply CSRFMiddleware (it works together with SessionMiddleware)
-user_mod.use_middleware(CSRFMiddleware, config)
+# user_mod.use_middleware(CSRFMiddleware, config)
 # Apply AuthenticationMiddleware after SessionMiddleware
 user_mod.use_middleware(AuthenticationMiddleware, config)
 

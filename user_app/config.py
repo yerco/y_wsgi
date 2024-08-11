@@ -12,7 +12,8 @@ class UserAppConfig:
     PUBLIC_ROUTES = ["/", "/greet", "/greet/[^/]+", "/about", "/users", "/create_user",
                      r"/user/\d+", "/filter_users/[^/]+", "/user_app_page", "/jinja2",
                      "/register", "/register/admin", "/register/user", "/json", "/start_background_task",
-                     "/wait_for_tasks", "/another", "/example-as-view", "/proxy-example", "/demo-plugin"]
+                     "/wait_for_tasks", "/another", "/example-as-view", "/proxy-example", "/demo-plugin",
+                     "/jwt-demo", "/generate-token"]
 
     # Jinja2 configuration
     TEMPLATE_ENGINE = "jinja2"
@@ -25,6 +26,8 @@ class UserAppConfig:
     DEFAULT_USERS = [
         {"username": "john", "password": "password", "role": "user"}
     ]
+
+    JWT_EXPIRATION_DELTA = 1  # 1 minute
 
 
 config = UserAppConfig()

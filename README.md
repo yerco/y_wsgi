@@ -143,21 +143,22 @@ Example Directory Structure
 your_app/
     ├── __init__.py
     ├── config.py
-    ├── module1/
-    │   ├── __init__.py
-    │   ├── views.py
-    │   └── templates/
-    │       └── template1.html
-    ├── module2/
-    │   ├── __init__.py
-    │   ├── views.py
-    │   └── templates/
-    │       └── template2.html
-    └── module3/
-        ├── __init__.py
-        ├── views.py
-        └── templates/
-            └── template3.html
+    ├── modules/
+    │   ├── module1/
+    │   │   ├── __init__.py
+    │   │   ├── views.py
+    │   │   └── templates/
+    │   │       └── template1.html
+    │   ├── module2/
+    │   │   ├── __init__.py
+    │   │   ├── views.py
+    │   │   └── templates/
+    │   │       └── template2.html
+    │   └── module3/
+    │       ├── __init__.py
+    │       ├── views.py
+    │       └── templates/
+    │           └── template3.html
 ```
 
 #### Assets
@@ -177,21 +178,22 @@ your_app/
     │   │   └── scripts.js
     │   └── images/
     │       └── logo.png
-    ├── module1/
-    │   ├── __init__.py
-    │   ├── views.py
-    │   └── templates/
-    │       └── template1.html
-    ├── module2/
-    │   ├── __init__.py
-    │   ├── views.py
-    │   └── templates/
-    │       └── template2.html
-    └── module3/
-        ├── __init__.py
-        ├── views.py
-        └── templates/
-            └── template3.html
+    ├── modules/
+    │   ├── module1/
+    │   │   ├── __init__.py
+    │   │   ├── views.py
+    │   │   └── templates/
+    │   │       └── template1.html
+    │   ├── module2/
+    │   │   ├── __init__.py
+    │   │   ├── views.py
+    │   │   └── templates/
+    │   │       └── template2.html
+    │   └── module3/
+    │       ├── __init__.py
+    │       ├── views.py
+    │       └── templates/
+    │           └── template3.html
 ```
 
 #### Signals and Middleware

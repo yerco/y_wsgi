@@ -25,8 +25,13 @@ def app(monkeypatch):
     app = app_registry.create_app('dummy_app')
     # Initialize the ORM adapter
     orm = initialize_orm([ModelForTesting])
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    apps_dir = os.path.join(current_dir, 'apps')
+    def mock_get_app_base_dir(self, name):
+        return str(apps_dir) + '/' + 'dummy_app'
+    monkeypatch.setattr(AppRegistry, '_get_app_base_dir', mock_get_app_base_dir)
     # Create a test module
-    test_mod = app_registry.create_module('test_module', app)
+    test_mod = app_registry.create_module('module1', app)
     # Register session middleware
     test_mod.use_middleware(SessionMiddleware)
     test_mod.register_routes(register_routes, orm)
@@ -38,7 +43,7 @@ def client(app):
     return FrameworkTestClient(app)
 
 
-def test_session_creation(client):
+def test_session_creation(client, monkeypatch):
     response = client.get('/')
     assert response.status == '200 OK'
     print(f"Response headers: {response.headers}")
